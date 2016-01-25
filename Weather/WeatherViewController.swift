@@ -9,27 +9,19 @@
 import CoreLocation
 import UIKit
 
-class WeatherViewController: UIViewController {
+class WeatherViewController: UIViewController, CLLocationManagerDelegate, UITextFieldDelegate {
     
     @IBOutlet weak var temperatureLabel: UILabel!
     @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
     @IBOutlet weak var locationField: UITextField!
     
     private var locationManager: CLLocationManager!
-    private var locationManagerDelegate: LocationManagerDelegate!
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        self.locationManagerDelegate = LocationManagerDelegate { location in
-            WeatherClient().fetchWeatherData(forCoordinate: location.coordinate, callback: { data in
-                self.temperatureLabel.text = String(format: "%.0f °C", round(data.temperature))
-                self.stopUpdatingWeather()
-            })
-        }
-        
         self.locationManager = CLLocationManager()
-        self.locationManager.delegate = self.locationManagerDelegate
+        self.locationManager.delegate = self
         self.locationManager.requestAlwaysAuthorization()
     }
     
@@ -53,6 +45,22 @@ class WeatherViewController: UIViewController {
             let alertController = UIAlertController(title: "Error", message: "Location services are not enabled on this device", preferredStyle: UIAlertControllerStyle.Alert)
             alertController.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.Default, handler: nil))
             self.presentViewController(alertController, animated: true, completion: nil)
+        }
+    }
+    
+    func textFieldShouldReturn(textField: UITextField) -> Bool {
+        if textField == self.locationField {
+            self.changeLocation()
+        }
+        return true
+    }
+    
+    func locationManager(manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        if let location = locations.last {
+            WeatherClient().fetchWeatherData(forCoordinate: location.coordinate, callback: { data in
+                self.temperatureLabel.text = String(format: "%.0f °C", round(data.temperature))
+                self.stopUpdatingWeather()
+            })
         }
     }
     

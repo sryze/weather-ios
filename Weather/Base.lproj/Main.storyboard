@@ -19,38 +19,46 @@
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Background" translatesAutoresizingMaskIntoConstraints="NO" id="xHf-Rf-Hd5">
+                                <rect key="frame" x="20" y="0.0" width="560" height="600"/>
+                            </imageView>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="-20 ℃" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="P7D-Ef-8AV">
-                                <rect key="frame" x="236" y="274" width="128" height="52"/>
-                                <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="44"/>
+                                <rect key="frame" x="219" y="267" width="163" height="66"/>
+                                <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="56"/>
                                 <color key="textColor" red="0.40000000000000002" green="0.40000000000000002" blue="0.40000000000000002" alpha="1" colorSpace="calibratedRGB"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <activityIndicatorView hidden="YES" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" style="gray" translatesAutoresizingMaskIntoConstraints="NO" id="DpQ-xE-5Tf">
                                 <rect key="frame" x="290" y="290" width="20" height="20"/>
                             </activityIndicatorView>
-                            <stackView opaque="NO" contentMode="scaleToFill" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="cYo-q9-goF">
-                                <rect key="frame" x="150" y="386" width="301" height="30"/>
+                            <stackView opaque="NO" contentMode="scaleToFill" misplaced="YES" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="cYo-q9-goF">
+                                <rect key="frame" x="150" y="393" width="365" height="40"/>
                                 <subviews>
                                     <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Enter location" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="rhP-W2-4mY">
-                                        <rect key="frame" x="0.0" y="0.0" width="240" height="30"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="300" height="40"/>
                                         <constraints>
-                                            <constraint firstAttribute="height" constant="30" id="aXD-Qi-ehE"/>
+                                            <constraint firstAttribute="height" constant="40" id="aXD-Qi-ehE">
+                                                <variation key="widthClass=compact" constant="35"/>
+                                            </constraint>
                                         </constraints>
-                                        <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="16"/>
                                         <textInputTraits key="textInputTraits"/>
+                                        <connections>
+                                            <outlet property="delegate" destination="BYZ-38-t0r" id="hsI-cL-p4z"/>
+                                        </connections>
                                     </textField>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="wzV-j0-Ncj">
-                                        <rect key="frame" x="248" y="0.0" width="53" height="30"/>
-                                        <state key="normal" title="Change"/>
+                                        <rect key="frame" x="308" y="0.0" width="57" height="40"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="16"/>
+                                        <state key="normal" title="Change">
+                                            <color key="titleColor" red="0.40000000000000002" green="0.40000000000000002" blue="0.40000000000000002" alpha="1" colorSpace="calibratedRGB"/>
+                                        </state>
                                         <connections>
                                             <action selector="changeLocation" destination="BYZ-38-t0r" eventType="touchUpInside" id="vjz-hf-wEM"/>
                                         </connections>
                                     </button>
                                 </subviews>
                             </stackView>
-                            <imageView userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="xHf-Rf-Hd5">
-                                <rect key="frame" x="20" y="0.0" width="560" height="600"/>
-                            </imageView>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                         <constraints>
@@ -61,7 +69,7 @@
                             <constraint firstItem="cYo-q9-goF" firstAttribute="top" secondItem="P7D-Ef-8AV" secondAttribute="bottom" constant="60" id="OpU-Js-5fE"/>
                             <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="xHf-Rf-Hd5" secondAttribute="bottom" id="ZWG-oA-Jux"/>
                             <constraint firstAttribute="trailingMargin" secondItem="xHf-Rf-Hd5" secondAttribute="trailing" id="aR1-al-8yE"/>
-                            <constraint firstItem="rhP-W2-4mY" firstAttribute="width" secondItem="8bC-Xf-vdC" secondAttribute="width" multiplier="0.4" id="dSI-Nz-1al"/>
+                            <constraint firstItem="rhP-W2-4mY" firstAttribute="width" secondItem="8bC-Xf-vdC" secondAttribute="width" multiplier="0.5" id="dSI-Nz-1al"/>
                             <constraint firstItem="xHf-Rf-Hd5" firstAttribute="top" secondItem="8bC-Xf-vdC" secondAttribute="topMargin" id="wuf-20-6HZ"/>
                             <constraint firstItem="DpQ-xE-5Tf" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="ysp-Dt-MI6"/>
                             <constraint firstItem="P7D-Ef-8AV" firstAttribute="centerY" secondItem="8bC-Xf-vdC" secondAttribute="centerY" id="zgg-DN-Swa"/>
@@ -78,4 +86,7 @@
             <point key="canvasLocation" x="609" y="435"/>
         </scene>
     </scenes>
+    <resources>
+        <image name="Background" width="2200" height="1467"/>
+    </resources>
 </document>
