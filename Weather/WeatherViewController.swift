@@ -48,6 +48,12 @@ class WeatherViewController: UIViewController, CLLocationManagerDelegate, UIText
         }
     }
     
+    override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
+        if self.locationField.isFirstResponder() {
+            self.locationField.resignFirstResponder()
+        }
+    }
+    
     func textFieldShouldReturn(textField: UITextField) -> Bool {
         if textField == self.locationField {
             self.changeLocation()
