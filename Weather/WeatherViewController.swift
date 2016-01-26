@@ -101,7 +101,7 @@ class WeatherViewController: UIViewController, CLLocationManagerDelegate, UIText
         
         switch result {
             case .Success(let data):
-                self.temperatureLabel.text = String(format: "%.0f °C", round(data.temperatureInCelsius))
+                self.temperatureLabel.text = String(format: "%+.0f °C", round(data.temperatureInCelsius))
             case .Failure(let error):
                 let alertController = UIAlertController(
                     title: "Error",
