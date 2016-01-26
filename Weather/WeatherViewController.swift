@@ -62,10 +62,7 @@ class WeatherViewController: UIViewController, CLLocationManagerDelegate, UIText
     
     func locationManager(manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         if let location = locations.last {
-            WeatherClient().fetchWeatherData(forCoordinate: location.coordinate, callback: { data in
-                self.temperatureLabel.text = String(format: "%.0f °C", round(data.temperature))
-                self.stopUpdatingWeather()
-            })
+            WeatherClient().fetchWeatherData(forCoordinate: location.coordinate, callback: self.completeUpdatingWeather)
         }
     }
     
@@ -74,11 +71,7 @@ class WeatherViewController: UIViewController, CLLocationManagerDelegate, UIText
             self.startUpdatingWeather()
             self.locationField.resignFirstResponder()
             self.locationField.text = nil
-            
-            WeatherClient().fetchWeatherData(forLocation: locationQuery, callback: { data in
-                self.stopUpdatingWeather()
-                self.temperatureLabel.text = String(format: "%.0f °C", round(data.temperature))
-            })
+            WeatherClient().fetchWeatherData(forLocation: locationQuery, callback: self.completeUpdatingWeather)
         }
     }
     
@@ -88,7 +81,12 @@ class WeatherViewController: UIViewController, CLLocationManagerDelegate, UIText
     }
     
     private func stopUpdatingWeather() {
-        self.temperatureLabel.hidden = false;
         self.activityIndicator.stopAnimating()
+        self.temperatureLabel.hidden = false;
+    }
+    
+    private func completeUpdatingWeather(weatherData: WeatherData) {
+        self.stopUpdatingWeather()
+        self.temperatureLabel.text = String(format: "%.0f °C", round(weatherData.temperatureInCelsius))
     }
 }

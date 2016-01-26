@@ -12,18 +12,20 @@ import CoreLocation
 class WeatherData {
     
     let temperature: Double
+    var temperatureInCelsius: Double {
+        get {
+            return self.temperature - 273.15
+        }
+    }
+    
     let humidity: Double
     let pressure: Double
     
     private init(response: Response<AnyObject, NSError>) {
         let JSON = response.result.value!
-        self.temperature = WeatherData.toCelsius(JSON["main"]!!["temp"]!! as! Double)
+        self.temperature = JSON["main"]!!["temp"]!! as! Double
         self.humidity = JSON["main"]!!["humidity"]!! as! Double
         self.pressure = JSON["main"]!!["pressure"]!! as! Double
-    }
-    
-    private static func toCelsius(temperatureInKelvins: Double) -> Double {
-        return temperatureInKelvins - 273.15
     }
 }
 
