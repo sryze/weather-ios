@@ -21,6 +21,7 @@ class WeatherViewController: UIViewController, CLLocationManagerDelegate, UIText
         super.viewDidLoad()
         
         self.locationManager.delegate = self
+        self.locationManager.requestWhenInUseAuthorization()
         self.locationManager.requestAlwaysAuthorization()
     }
     
@@ -64,6 +65,10 @@ class WeatherViewController: UIViewController, CLLocationManagerDelegate, UIText
             self.changeLocation()
         }
         return true
+    }
+    
+    func locationManager(manager: CLLocationManager, didFailWithError error: NSError) {
+        print("Location manager failed with error: \(error)")
     }
     
     func locationManager(manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
