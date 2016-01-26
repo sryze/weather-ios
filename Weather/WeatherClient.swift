@@ -24,9 +24,7 @@ class WeatherData {
     
     let temperature: Double
     var temperatureInCelsius: Double {
-        get {
-            return self.temperature - 273.15
-        }
+        return self.temperature - 273.15
     }
     
     let humidity: Double
