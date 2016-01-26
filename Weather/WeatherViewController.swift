@@ -41,8 +41,14 @@ class WeatherViewController: UIViewController, CLLocationManagerDelegate, UIText
         super.viewDidAppear(animated)
         
         if !CLLocationManager.locationServicesEnabled() {
-            let alertController = UIAlertController(title: "Error", message: "Location services are not enabled on this device", preferredStyle: UIAlertControllerStyle.Alert)
-            alertController.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.Default, handler: nil))
+            let alertController = UIAlertController(
+                title: "Error",
+                message: "Location services are not enabled on this device",
+                preferredStyle: .Alert)
+            alertController.addAction(UIAlertAction(
+                title: "OK",
+                style: .Default,
+                handler: nil))
             self.presentViewController(alertController, animated: true, completion: nil)
         }
     }
@@ -62,7 +68,7 @@ class WeatherViewController: UIViewController, CLLocationManagerDelegate, UIText
     
     func locationManager(manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         if let location = locations.last {
-            WeatherClient().fetchWeatherData(forCoordinate: location.coordinate, callback: self.completeUpdatingWeather)
+            WeatherClient().fetchWeatherForCoordinate(location.coordinate, handler: self.completeUpdatingWeather)
         }
     }
     
@@ -71,7 +77,7 @@ class WeatherViewController: UIViewController, CLLocationManagerDelegate, UIText
             self.startUpdatingWeather()
             self.locationField.resignFirstResponder()
             self.locationField.text = nil
-            WeatherClient().fetchWeatherData(forLocation: locationQuery, callback: self.completeUpdatingWeather)
+            WeatherClient().fetchWeatherForLocation(locationQuery, handler: self.completeUpdatingWeather)
         }
     }
     
@@ -85,8 +91,22 @@ class WeatherViewController: UIViewController, CLLocationManagerDelegate, UIText
         self.temperatureLabel.hidden = false;
     }
     
-    private func completeUpdatingWeather(weatherData: WeatherData) {
+    private func completeUpdatingWeather(result: WeatherResult) {
         self.stopUpdatingWeather()
-        self.temperatureLabel.text = String(format: "%.0f °C", round(weatherData.temperatureInCelsius))
+        
+        switch result {
+            case let .Success(data):
+                self.temperatureLabel.text = String(format: "%.0f °C", round(data.temperatureInCelsius))
+            case let .Failure(error):
+                let alertController = UIAlertController(
+                    title: "Error",
+                    message: error.localizedDescription,
+                    preferredStyle: .Alert)
+                alertController.addAction(UIAlertAction(
+                    title: "OK",
+                    style: .Default,
+                    handler: nil))
+                self.presentViewController(alertController, animated: true, completion: nil)
+        }
     }
 }
