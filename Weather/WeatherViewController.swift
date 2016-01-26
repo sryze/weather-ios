@@ -95,9 +95,9 @@ class WeatherViewController: UIViewController, CLLocationManagerDelegate, UIText
         self.stopUpdatingWeather()
         
         switch result {
-            case let .Success(data):
+            case .Success(let data):
                 self.temperatureLabel.text = String(format: "%.0f °C", round(data.temperatureInCelsius))
-            case let .Failure(error):
+            case .Failure(let error):
                 let alertController = UIAlertController(
                     title: "Error",
                     message: error.localizedDescription,

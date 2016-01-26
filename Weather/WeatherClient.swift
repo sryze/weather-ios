@@ -56,7 +56,7 @@ class WeatherClient {
         
         Alamofire.request(.GET, WeatherClient.APIBaseURL, parameters: finalParameters).responseJSON { response in
             switch response.result {
-                case let .Success(value):
+                case .Success(let value):
                     let JSON = value as! [String: AnyObject]
                     if let errorCode = JSON["cod"], let errorMessage = JSON["message"] {
                         let error = NSError(domain: WeatherErrorDomain, code: WeatherError.APIFailure.rawValue, userInfo: [
@@ -67,7 +67,7 @@ class WeatherClient {
                         let data = WeatherData(rawData: JSON)
                         handler(WeatherResult.Success(data))
                     }
-                case let .Failure(error):
+                case .Failure(let error):
                     handler(WeatherResult.Failure(error))
             }
         }
