@@ -82,12 +82,12 @@ class WeatherViewController: UIViewController, CLLocationManagerDelegate, UIText
         }
     }
     
-    func startUpdatingWeather() {
+    private func startUpdatingWeather() {
         self.temperatureLabel.hidden = true;
         self.activityIndicator.startAnimating()
     }
     
-    func stopUpdatingWeather() {
+    private func stopUpdatingWeather() {
         self.temperatureLabel.hidden = false;
         self.activityIndicator.stopAnimating()
     }
