@@ -15,12 +15,11 @@ class WeatherViewController: UIViewController, CLLocationManagerDelegate, UIText
     @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
     @IBOutlet weak var locationField: UITextField!
     
-    private var locationManager: CLLocationManager!
+    private var locationManager: CLLocationManager = CLLocationManager()
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        self.locationManager = CLLocationManager()
         self.locationManager.delegate = self
         self.locationManager.requestAlwaysAuthorization()
     }
