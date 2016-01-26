@@ -62,7 +62,7 @@ class WeatherViewController: UIViewController, CLLocationManagerDelegate, UIText
     
     func textFieldShouldReturn(textField: UITextField) -> Bool {
         if textField == self.locationField {
-            self.changeLocation()
+            self.updateLocation()
         }
         return true
     }
@@ -77,7 +77,7 @@ class WeatherViewController: UIViewController, CLLocationManagerDelegate, UIText
         }
     }
     
-    @IBAction func changeLocation() {
+    @IBAction func updateLocation() {
         if let locationQuery = self.locationField.text where locationQuery.characters.count != 0 {
             self.startUpdatingWeather()
             self.locationField.resignFirstResponder()

@@ -40,10 +40,10 @@
                                     </constraint>
                                 </constraints>
                             </view>
-                            <stackView opaque="NO" contentMode="scaleToFill" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="cYo-q9-goF">
-                                <rect key="frame" x="118" y="320" width="365" height="40"/>
+                            <stackView opaque="NO" contentMode="scaleToFill" misplaced="YES" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="cYo-q9-goF">
+                                <rect key="frame" x="118" y="320" width="362" height="40"/>
                                 <subviews>
-                                    <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Enter location" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="rhP-W2-4mY">
+                                    <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Enter a location" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="rhP-W2-4mY">
                                         <rect key="frame" x="0.0" y="0.0" width="300" height="40"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="40" id="aXD-Qi-ehE">
@@ -57,13 +57,13 @@
                                         </connections>
                                     </textField>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="wzV-j0-Ncj">
-                                        <rect key="frame" x="308" y="0.0" width="57" height="40"/>
+                                        <rect key="frame" x="308" y="0.0" width="54" height="40"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="16"/>
-                                        <state key="normal" title="Change">
+                                        <state key="normal" title="Update">
                                             <color key="titleColor" red="0.40000000000000002" green="0.40000000000000002" blue="0.40000000000000002" alpha="1" colorSpace="calibratedRGB"/>
                                         </state>
                                         <connections>
-                                            <action selector="changeLocation" destination="BYZ-38-t0r" eventType="touchUpInside" id="vjz-hf-wEM"/>
+                                            <action selector="updateLocation" destination="BYZ-38-t0r" eventType="touchUpInside" id="Cvz-hB-MT1"/>
                                         </connections>
                                     </button>
                                 </subviews>
