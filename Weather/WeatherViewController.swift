@@ -78,7 +78,7 @@ class WeatherViewController: UIViewController, CLLocationManagerDelegate, UIText
     }
     
     @IBAction func updateLocation() {
-        if let locationQuery = self.locationField.text where locationQuery.characters.count != 0 {
+        if let locationQuery = self.locationField.text where !locationQuery.isEmpty {
             self.startUpdatingWeather()
             self.locationField.resignFirstResponder()
             self.locationField.text = nil
