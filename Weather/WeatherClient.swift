@@ -58,7 +58,7 @@ class WeatherClient {
             switch response.result {
                 case .Success(let value):
                     let JSON = value as! [String: AnyObject]
-                    if let errorCode = JSON["cod"], let errorMessage = JSON["message"] {
+                    if let errorCode = JSON["cod"], errorMessage = JSON["message"] {
                         let error = NSError(domain: WeatherErrorDomain, code: WeatherError.APIFailure.rawValue, userInfo: [
                             NSLocalizedDescriptionKey: "API returned error \(errorCode): \(errorMessage)"
                         ])
