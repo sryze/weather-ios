@@ -11,6 +11,7 @@ import UIKit
 
 class WeatherViewController: UIViewController, CLLocationManagerDelegate, UITextFieldDelegate {
     
+    @IBOutlet weak var placeNameLabel: UILabel!
     @IBOutlet weak var temperatureLabel: UILabel!
     @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
     @IBOutlet weak var locationField: UITextField!
@@ -37,7 +38,9 @@ class WeatherViewController: UIViewController, CLLocationManagerDelegate, UIText
             self.locationManager.startUpdatingLocation()
         }
         
-        self.startUpdatingWeather()
+        self.placeNameLabel.hidden = true
+        self.temperatureLabel.hidden = true
+        self.activityIndicator.startAnimating()
     }
     
     override func viewDidAppear(animated: Bool) {
@@ -81,32 +84,40 @@ class WeatherViewController: UIViewController, CLLocationManagerDelegate, UIText
                 self.locationManager.startMonitoringSignificantLocationChanges()
             }
             
-            weatherClient.fetchWeatherForCoordinate(location.coordinate,
-                                                    handler: self.completeUpdatingWeather)
+            print("Fetching weather for (\(location.coordinate.latitude), \(location.coordinate.longitude)")
+            weatherClient.fetchWeatherForCoordinate(location.coordinate, handler: self.completeUpdatingWeather)
+            
+            let geocoder = CLGeocoder()
+            geocoder.reverseGeocodeLocation(location, completionHandler: { (placemarks, ErrorType) in
+                if let placemark = placemarks?.last,
+                       city = placemark.locality,
+                       country = placemark.country {
+                    self.placeNameLabel.text =  "\(city), \(country)"
+                    self.placeNameLabel.hidden = false
+                }
+            })
         }
     }
     
     @IBAction func updateLocation() {
         if let locationQuery = self.locationField.text where !locationQuery.isEmpty {
-            self.startUpdatingWeather()
-            self.locationField.resignFirstResponder()
             self.locationField.text = nil
+            self.locationField.resignFirstResponder()
+            
+            let placeName = locationQuery.capitalizedString
+            self.placeNameLabel.text = placeName
+            
+            self.temperatureLabel.hidden = true
+            self.activityIndicator.startAnimating()
+            
+            print("Fetching weather for \(placeName)")
             weatherClient.fetchWeatherForLocation(locationQuery, handler: self.completeUpdatingWeather)
         }
     }
     
-    private func startUpdatingWeather() {
-        self.temperatureLabel.hidden = true;
-        self.activityIndicator.startAnimating()
-    }
-    
-    private func stopUpdatingWeather() {
-        self.activityIndicator.stopAnimating()
-        self.temperatureLabel.hidden = false;
-    }
-    
     private func completeUpdatingWeather(result: WeatherResult) {
-        self.stopUpdatingWeather()
+        self.activityIndicator.stopAnimating()
+        self.temperatureLabel.hidden = false
         
         switch result {
             case .Success(let data):

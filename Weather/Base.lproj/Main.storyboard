@@ -20,8 +20,14 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <imageView userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Background" translatesAutoresizingMaskIntoConstraints="NO" id="xHf-Rf-Hd5">
-                                <rect key="frame" x="20" y="0.0" width="560" height="600"/>
+                                <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                             </imageView>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Omsk, Russia" textAlignment="center" lineBreakMode="wordWrap" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="aA0-8a-8pq">
+                                <rect key="frame" x="20" y="139" width="560" height="35"/>
+                                <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="30"/>
+                                <color key="textColor" red="0.40000000000000002" green="0.40000000000000002" blue="0.40000000000000002" alpha="1" colorSpace="calibratedRGB"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="-20 ℃" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="P7D-Ef-8AV">
                                 <rect key="frame" x="219" y="214" width="163" height="66"/>
                                 <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="56"/>
@@ -40,8 +46,8 @@
                                     </constraint>
                                 </constraints>
                             </view>
-                            <stackView opaque="NO" contentMode="scaleToFill" misplaced="YES" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="cYo-q9-goF">
-                                <rect key="frame" x="118" y="320" width="362" height="40"/>
+                            <stackView opaque="NO" contentMode="scaleToFill" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="cYo-q9-goF">
+                                <rect key="frame" x="119" y="320" width="362" height="40"/>
                                 <subviews>
                                     <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Enter a location" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="rhP-W2-4mY">
                                         <rect key="frame" x="0.0" y="0.0" width="300" height="40"/>
@@ -71,25 +77,33 @@
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                         <constraints>
+                            <constraint firstItem="xHf-Rf-Hd5" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="1An-yw-Su7"/>
                             <constraint firstItem="cYo-q9-goF" firstAttribute="top" secondItem="Inj-3t-kbF" secondAttribute="bottom" id="3Uu-XT-liC"/>
-                            <constraint firstItem="xHf-Rf-Hd5" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" id="4Du-ak-dU9"/>
                             <constraint firstItem="P7D-Ef-8AV" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="77q-0d-wwr"/>
+                            <constraint firstItem="xHf-Rf-Hd5" firstAttribute="centerY" secondItem="8bC-Xf-vdC" secondAttribute="centerY" id="9gl-XM-0po"/>
+                            <constraint firstItem="aA0-8a-8pq" firstAttribute="width" relation="lessThanOrEqual" secondItem="8bC-Xf-vdC" secondAttribute="width" id="D3Q-R2-ZTP"/>
                             <constraint firstItem="cYo-q9-goF" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="J4k-MD-CDr"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="aA0-8a-8pq" secondAttribute="trailing" id="NxM-7O-t76"/>
+                            <constraint firstItem="xHf-Rf-Hd5" firstAttribute="height" secondItem="8bC-Xf-vdC" secondAttribute="height" id="ONM-iK-V4A"/>
+                            <constraint firstItem="aA0-8a-8pq" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="RIt-pd-Rhu"/>
                             <constraint firstItem="Inj-3t-kbF" firstAttribute="centerY" secondItem="8bC-Xf-vdC" secondAttribute="centerY" id="WM6-rv-4fx"/>
-                            <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="xHf-Rf-Hd5" secondAttribute="bottom" id="ZWG-oA-Jux"/>
-                            <constraint firstAttribute="trailingMargin" secondItem="xHf-Rf-Hd5" secondAttribute="trailing" id="aR1-al-8yE"/>
+                            <constraint firstItem="aA0-8a-8pq" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" id="bIe-Ek-7WE"/>
                             <constraint firstItem="rhP-W2-4mY" firstAttribute="width" secondItem="8bC-Xf-vdC" secondAttribute="width" multiplier="0.5" id="dSI-Nz-1al"/>
+                            <constraint firstItem="P7D-Ef-8AV" firstAttribute="top" secondItem="aA0-8a-8pq" secondAttribute="bottom" constant="40" id="gHb-bj-ETu">
+                                <variation key="heightClass=compact" constant="20"/>
+                            </constraint>
                             <constraint firstItem="P7D-Ef-8AV" firstAttribute="bottom" secondItem="Inj-3t-kbF" secondAttribute="top" id="kGj-ct-aiO"/>
+                            <constraint firstItem="xHf-Rf-Hd5" firstAttribute="width" secondItem="8bC-Xf-vdC" secondAttribute="width" id="n7f-Lq-v9c"/>
                             <constraint firstItem="DpQ-xE-5Tf" firstAttribute="centerY" secondItem="P7D-Ef-8AV" secondAttribute="centerY" id="qfP-z8-R2M"/>
                             <constraint firstItem="Inj-3t-kbF" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="qx1-su-4yz"/>
                             <constraint firstItem="Inj-3t-kbF" firstAttribute="width" secondItem="8bC-Xf-vdC" secondAttribute="width" id="rqG-3x-NZd"/>
-                            <constraint firstItem="xHf-Rf-Hd5" firstAttribute="top" secondItem="8bC-Xf-vdC" secondAttribute="topMargin" id="wuf-20-6HZ"/>
                             <constraint firstItem="DpQ-xE-5Tf" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="ysp-Dt-MI6"/>
                         </constraints>
                     </view>
                     <connections>
                         <outlet property="activityIndicator" destination="DpQ-xE-5Tf" id="poM-tB-AUr"/>
                         <outlet property="locationField" destination="rhP-W2-4mY" id="IFS-Zr-CFg"/>
+                        <outlet property="placeNameLabel" destination="aA0-8a-8pq" id="YrE-nt-oPr"/>
                         <outlet property="temperatureLabel" destination="P7D-Ef-8AV" id="qgx-uA-NaG"/>
                     </connections>
                 </viewController>
