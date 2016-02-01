@@ -85,7 +85,7 @@ class WeatherViewController: UIViewController, CLLocationManagerDelegate, UIText
             }
             
             print("Fetching weather for (\(location.coordinate.latitude), \(location.coordinate.longitude)")
-            weatherClient.fetchWeatherForCoordinate(location.coordinate, handler: self.completeUpdatingWeather)
+            weatherClient.fetchWeatherForCoordinate(location.coordinate, handler: self.finishUpdatingWeather)
             
             let geocoder = CLGeocoder()
             geocoder.reverseGeocodeLocation(location, completionHandler: { (placemarks, ErrorType) in
@@ -111,11 +111,11 @@ class WeatherViewController: UIViewController, CLLocationManagerDelegate, UIText
             self.activityIndicator.startAnimating()
             
             print("Fetching weather for \(placeName)")
-            weatherClient.fetchWeatherForLocation(locationQuery, handler: self.completeUpdatingWeather)
+            weatherClient.fetchWeatherForLocation(locationQuery, handler: self.finishUpdatingWeather)
         }
     }
     
-    private func completeUpdatingWeather(result: WeatherResult) {
+    private func finishUpdatingWeather(result: WeatherResult) {
         self.activityIndicator.stopAnimating()
         self.temperatureLabel.hidden = false
         
