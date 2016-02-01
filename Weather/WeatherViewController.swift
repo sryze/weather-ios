@@ -15,8 +15,9 @@ class WeatherViewController: UIViewController, CLLocationManagerDelegate, UIText
     @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
     @IBOutlet weak var locationField: UITextField!
     
-    private var locationManager: CLLocationManager = CLLocationManager()
-    private var receivedInitialLocation: Bool = false
+    private var locationManager = CLLocationManager()
+    private var receivedInitialLocation = false
+    private var weatherClient = WeatherClient()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -80,7 +81,8 @@ class WeatherViewController: UIViewController, CLLocationManagerDelegate, UIText
                 self.locationManager.startMonitoringSignificantLocationChanges()
             }
             
-            WeatherClient().fetchWeatherForCoordinate(location.coordinate, handler: self.completeUpdatingWeather)
+            weatherClient.fetchWeatherForCoordinate(location.coordinate,
+                                                    handler: self.completeUpdatingWeather)
         }
     }
     
@@ -89,7 +91,7 @@ class WeatherViewController: UIViewController, CLLocationManagerDelegate, UIText
             self.startUpdatingWeather()
             self.locationField.resignFirstResponder()
             self.locationField.text = nil
-            WeatherClient().fetchWeatherForLocation(locationQuery, handler: self.completeUpdatingWeather)
+            weatherClient.fetchWeatherForLocation(locationQuery, handler: self.completeUpdatingWeather)
         }
     }
     
