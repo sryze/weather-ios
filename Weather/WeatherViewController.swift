@@ -16,6 +16,7 @@ class WeatherViewController: UIViewController, CLLocationManagerDelegate, UIText
     @IBOutlet weak var locationField: UITextField!
     
     private var locationManager: CLLocationManager = CLLocationManager()
+    private var receivedInitialLocation: Bool = false
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -29,7 +30,7 @@ class WeatherViewController: UIViewController, CLLocationManagerDelegate, UIText
         super.viewWillAppear(animated)
 
         if CLLocationManager.significantLocationChangeMonitoringAvailable() {
-            self.locationManager.startMonitoringSignificantLocationChanges()
+            self.locationManager.startUpdatingLocation()
         } else {
             self.locationManager.distanceFilter = 10_000
             self.locationManager.startUpdatingLocation()
@@ -71,6 +72,14 @@ class WeatherViewController: UIViewController, CLLocationManagerDelegate, UIText
     
     func locationManager(manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         if let location = locations.last {
+            print("Obtained device location: \(location)")
+            
+            if !self.receivedInitialLocation {
+                self.receivedInitialLocation = true
+                self.locationManager.stopUpdatingLocation()
+                self.locationManager.startMonitoringSignificantLocationChanges()
+            }
+            
             WeatherClient().fetchWeatherForCoordinate(location.coordinate, handler: self.completeUpdatingWeather)
         }
     }
