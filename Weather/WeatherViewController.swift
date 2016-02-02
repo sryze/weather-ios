@@ -20,6 +20,7 @@ class WeatherViewController: UIViewController, CLLocationManagerDelegate, UIText
     private var receivedInitialLocation = false
     private var weatherLocation: WeatherLocation?
     private let weatherClient = WeatherClient(APIKey: "df8126a16e5ad6f20b8185627628b7f5")
+    private let geocoder = CLGeocoder()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -97,8 +98,7 @@ class WeatherViewController: UIViewController, CLLocationManagerDelegate, UIText
             print("Fetching weather for \(self.weatherLocation!)")
             self.weatherClient.fetchWeatherForLocation(self.weatherLocation!, handler: self.finishUpdatingWeather)
             
-            let geocoder = CLGeocoder()
-            geocoder.reverseGeocodeLocation(location, completionHandler: { (placemarks, ErrorType) in
+            self.geocoder.reverseGeocodeLocation(location, completionHandler: { (placemarks, ErrorType) in
                 if let placemark = placemarks?.last,
                        city = placemark.locality,
                        country = placemark.country {
@@ -119,19 +119,31 @@ class WeatherViewController: UIViewController, CLLocationManagerDelegate, UIText
     }
     
     @IBAction func updateLocation() {
-        if let location = self.locationField.text where !location.isEmpty {
+        if let address = self.locationField.text where !address.isEmpty {
             self.locationField.text = nil
             self.locationField.resignFirstResponder()
             
-            let placeName = location.capitalizedString
-            self.weatherLocation = .Address(placeName)
-            self.placeNameLabel.text = placeName
-            
+            self.placeNameLabel.hidden = true
             self.temperatureLabel.hidden = true
             self.activityIndicator.startAnimating()
             
-            print("Fetching weather for \(self.weatherLocation!)")
-            self.weatherClient.fetchWeatherForLocation(self.weatherLocation!, handler: self.finishUpdatingWeather)
+            geocoder.geocodeAddressString(address, completionHandler: { (placemarks, error) -> Void in
+                self.placeNameLabel.hidden = false
+                self.placeNameLabel.text = address
+                
+                if let placemark = placemarks?.last,
+                       city = placemark.locality,
+                       country = placemark.country,
+                       location = placemark.location {
+                    self.placeNameLabel.text = "\(city), \(country)"
+                    self.weatherLocation = .Precise(location.coordinate)
+                } else {
+                    self.weatherLocation = .Address(address)
+                }
+                
+                print("Fetching weather for \(self.weatherLocation!)")
+                self.weatherClient.fetchWeatherForLocation(self.weatherLocation!, handler: self.finishUpdatingWeather)
+            })
         }
     }
     
