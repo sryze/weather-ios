@@ -98,7 +98,7 @@ class WeatherViewController: UIViewController, CLLocationManagerDelegate, UIText
             print("Fetching weather for \(self.weatherLocation!)")
             self.weatherClient.fetchWeatherForLocation(self.weatherLocation!, handler: self.finishUpdatingWeather)
             
-            self.geocoder.reverseGeocodeLocation(location, completionHandler: { (placemarks, ErrorType) in
+            self.geocoder.reverseGeocodeLocation(location, completionHandler: { (placemarks, error) in
                 if let placemark = placemarks?.last,
                        city = placemark.locality,
                        country = placemark.country {
