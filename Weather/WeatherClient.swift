@@ -91,8 +91,8 @@ class WeatherClient {
     ///
     /// - SeeAlso: `fetchWeatherForLocation(_:handler:)`
     func fetchWeatherWithParameters(parameters: [String: AnyObject], handler: (WeatherResult) -> Void) {
-        var finalParameters = parameters;
-        finalParameters.updateValue(WeatherClient.APIKey, forKey: "APPID")
+        var finalParameters = parameters
+        finalParameters["APPID"] = WeatherClient.APIKey
         
         Alamofire.request(.GET, WeatherClient.APIBaseURL, parameters: finalParameters).responseJSON { response in
             switch response.result {
