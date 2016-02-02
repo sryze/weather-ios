@@ -17,7 +17,7 @@ class WeatherViewController: UIViewController, CLLocationManagerDelegate, UIText
     @IBOutlet weak var locationField: UITextField!
     
     private var locationManager = CLLocationManager()
-    private var receivedInitialLocation = false
+    private var location: CLLocation?
     private var weatherClient = WeatherClient()
     
     override func viewDidLoad() {
@@ -26,6 +26,12 @@ class WeatherViewController: UIViewController, CLLocationManagerDelegate, UIText
         self.locationManager.delegate = self
         self.locationManager.requestWhenInUseAuthorization()
         self.locationManager.requestAlwaysAuthorization()
+        
+        NSTimer.scheduledTimerWithTimeInterval(600,
+            target: self,
+            selector: Selector("performScheduledWeatherUpdate"),
+            userInfo: nil,
+            repeats: true)
     }
     
     override func viewWillAppear(animated: Bool) {
@@ -78,11 +84,13 @@ class WeatherViewController: UIViewController, CLLocationManagerDelegate, UIText
         if let location = locations.last {
             print("Obtained device location: \(location)")
             
-            if !self.receivedInitialLocation {
-                self.receivedInitialLocation = true
+            // Stop high-precision location updates after obtaining the initial location. Subsequent
+            // updates will come from significant location changes.
+            if self.location == nil {
                 self.locationManager.stopUpdatingLocation()
                 self.locationManager.startMonitoringSignificantLocationChanges()
             }
+            self.location = location
             
             print("Fetching weather for (\(location.coordinate.latitude), \(location.coordinate.longitude)")
             weatherClient.fetchWeatherForCoordinate(location.coordinate, handler: self.finishUpdatingWeather)
@@ -96,6 +104,15 @@ class WeatherViewController: UIViewController, CLLocationManagerDelegate, UIText
                     self.placeNameLabel.hidden = false
                 }
             })
+        }
+    }
+    
+    func performScheduledWeatherUpdate() {
+        if let location = self.location {
+            print("Performing scheduled weather update")
+            weatherClient.fetchWeatherForCoordinate(location.coordinate, handler: self.finishUpdatingWeather)
+        } else {
+            print("Skipping scheduled weather update beacuse location is unknown")
         }
     }
     
