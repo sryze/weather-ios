@@ -10,7 +10,7 @@ import CoreLocation
 import UIKit
 
 class WeatherViewController: UIViewController, CLLocationManagerDelegate, UITextFieldDelegate {
-    
+
     @IBOutlet weak var placeNameLabel: UILabel!
     @IBOutlet weak var temperatureLabel: UILabel!
     @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
@@ -92,9 +92,9 @@ class WeatherViewController: UIViewController, CLLocationManagerDelegate, UIText
                 self.locationManager.startMonitoringSignificantLocationChanges()
                 self.receivedInitialLocation = true
             }
-            
-            print("Fetching weather for (\(location.coordinate.latitude), \(location.coordinate.longitude)")
             self.weatherLocation = .Precise(location.coordinate)
+            
+            print("Fetching weather for \(self.weatherLocation!)")
             self.weatherClient.fetchWeatherForLocation(self.weatherLocation!, handler: self.finishUpdatingWeather)
             
             let geocoder = CLGeocoder()
@@ -124,13 +124,13 @@ class WeatherViewController: UIViewController, CLLocationManagerDelegate, UIText
             self.locationField.resignFirstResponder()
             
             let placeName = location.capitalizedString
+            self.weatherLocation = .Address(placeName)
             self.placeNameLabel.text = placeName
             
             self.temperatureLabel.hidden = true
             self.activityIndicator.startAnimating()
             
-            print("Fetching weather for \(placeName)")
-            self.weatherLocation = .Address(location)
+            print("Fetching weather for \(self.weatherLocation!)")
             self.weatherClient.fetchWeatherForLocation(self.weatherLocation!, handler: self.finishUpdatingWeather)
         }
     }
@@ -141,8 +141,10 @@ class WeatherViewController: UIViewController, CLLocationManagerDelegate, UIText
         
         switch result {
             case .Success(let data):
+                print("Successfully fetched weather data: \(data)")
                 self.temperatureLabel.text = String(format: "%+.0f °C", round(data.temperatureInCelsius))
             case .Failure(let error):
+                print("Failed to fetch weather data: \(error)")
                 let alertController = UIAlertController(
                     title: "Error",
                     message: error.localizedDescription,

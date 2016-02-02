@@ -20,13 +20,21 @@ enum WeatherResult {
     case Failure(NSError)
 }
 
-enum WeatherLocation {
+enum WeatherLocation: CustomStringConvertible {
     case Precise(CLLocationCoordinate2D)
     case Address(String)
+    
+    var description: String {
+        switch self {
+            case .Precise(let coordinate):
+                return "<WeatherLocation.Precise: coordinate=(\(coordinate.latitude), \(coordinate.longitude))>"
+            case .Address(let address):
+                return "<WeatherLocation.Address: address=\(address)>"
+        }
+    }
 }
 
-class WeatherData {
-    
+class WeatherData: CustomStringConvertible {
     let temperature: Double
     var temperatureInCelsius: Double {
         return self.temperature - 273.15
@@ -40,10 +48,13 @@ class WeatherData {
         self.humidity = rawData["main"]!["humidity"] as! Double
         self.pressure = rawData["main"]!["pressure"] as! Double
     }
+    
+    var description: String {
+        return "<WeatherData: temperature=\(self.temperature), humidity=\(self.humidity), pressure=\(self.pressure)>"
+    }
 }
 
 class WeatherClient {
-
     private static let APIBaseURL = "http://api.openweathermap.org/data/2.5/weather"
     private static let APIKey = "df8126a16e5ad6f20b8185627628b7f5"
     
