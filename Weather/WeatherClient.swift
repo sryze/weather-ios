@@ -16,12 +16,16 @@ enum WeatherError: Int {
 }
 
 enum WeatherResult {
+    /// Weather request succeeded.
     case Success(WeatherData)
+    /// Weather request resulted in a nerror.
     case Failure(NSError)
 }
 
 enum WeatherLocation: CustomStringConvertible {
+    /// Location with exact coordinates (latitude and longitude).
     case Precise(CLLocationCoordinate2D)
+    /// Location with an address of place name, e.g. New York.
     case Address(String)
     
     var description: String {
@@ -35,12 +39,16 @@ enum WeatherLocation: CustomStringConvertible {
 }
 
 class WeatherData: CustomStringConvertible {
+    /// Current temperature as absolute value (i.e. in Kelvin).
     let temperature: Double
+    /// Current temperature converted to Celsius degrees.
     var temperatureInCelsius: Double {
         return self.temperature - 273.15
     }
     
+    /// Current humidity (unused).
     let humidity: Double
+    /// Current pressure (unused).
     let pressure: Double
     
     private init(rawData: [String: AnyObject]) {
@@ -55,19 +63,34 @@ class WeatherData: CustomStringConvertible {
 }
 
 class WeatherClient {
+    /// The base URL for the OpenWeatherMap API.
     private static let APIBaseURL = "http://api.openweathermap.org/data/2.5/weather"
+    /// The API key (also known as APPID).
     private static let APIKey = "df8126a16e5ad6f20b8185627628b7f5"
     
+    /// Fetches current weather data at the specified location.
+    ///
+    /// - Parameter location: The location for which to get weather.
+    /// - Parameter handler: A callback invoked when the request is complete.
+    ///
+    /// - SeeAlso: `fetchWeather(_:handler:)`
     func fetchWeatherForLocation(location: WeatherLocation, handler: (WeatherResult) -> Void) {
         switch location {
             case .Precise(let coordinate):
-                self.fetchWeather(["lat": coordinate.latitude, "lon": coordinate.longitude], handler: handler)
+                self.fetchWeatherWithParameters(["lat": coordinate.latitude, "lon": coordinate.longitude], handler: handler)
             case .Address(let query):
-                self.fetchWeather(["q": query], handler: handler)
+                self.fetchWeatherWithParameters(["q": query], handler: handler)
         }
     }
     
-    func fetchWeather(parameters: [String: AnyObject], handler: (WeatherResult) -> Void) {
+    /// A generic method for fetching current weather data with arbitrary query parameters.
+    ///
+    /// - Parameter parameters: The request parameters. See [OpenWeatherMap API documentation](http://openweathermap.org/current)
+    ///                         for possible values.
+    /// - Parameter handler: A callback invoked when the request is complete.
+    ///
+    /// - SeeAlso: `fetchWeatherForLocation(_:handler:)`
+    func fetchWeatherWithParameters(parameters: [String: AnyObject], handler: (WeatherResult) -> Void) {
         var finalParameters = parameters;
         finalParameters.updateValue(WeatherClient.APIKey, forKey: "APPID")
         
