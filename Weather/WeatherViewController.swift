@@ -16,10 +16,10 @@ class WeatherViewController: UIViewController, CLLocationManagerDelegate, UIText
     @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
     @IBOutlet weak var locationField: UITextField!
     
-    private var locationManager = CLLocationManager()
+    private let locationManager = CLLocationManager()
     private var receivedInitialLocation = false
     private var weatherLocation: WeatherLocation?
-    private var weatherClient = WeatherClient(APIKey: "df8126a16e5ad6f20b8185627628b7f5")
+    private let weatherClient = WeatherClient(APIKey: "df8126a16e5ad6f20b8185627628b7f5")
     
     override func viewDidLoad() {
         super.viewDidLoad()
