@@ -38,7 +38,7 @@ enum WeatherLocation: CustomStringConvertible {
     }
 }
 
-class WeatherData: CustomStringConvertible {
+struct WeatherData: CustomStringConvertible {
     /// Current temperature as absolute value (i.e. in Kelvin).
     let temperature: Double
     /// Current temperature converted to Celsius degrees.
@@ -51,12 +51,6 @@ class WeatherData: CustomStringConvertible {
     /// Current pressure (unused).
     let pressure: Double
     
-    private init(rawData: [String: AnyObject]) {
-        self.temperature = rawData["main"]!["temp"] as! Double
-        self.humidity = rawData["main"]!["humidity"] as! Double
-        self.pressure = rawData["main"]!["pressure"] as! Double
-    }
-    
     var description: String {
         return "<WeatherData: temperature=\(self.temperature), humidity=\(self.humidity), pressure=\(self.pressure)>"
     }
@@ -65,6 +59,14 @@ class WeatherData: CustomStringConvertible {
 class WeatherClient {
     /// The base URL for the OpenWeatherMap API.
     private static let APIBaseURL = "http://api.openweathermap.org/data/2.5/weather"
+    
+    /// Represents a response from the OpenWeatherMap API.
+    enum Result {
+        /// Data response, contains weather data such as temperature, etc.
+        case Success(WeatherData)
+        /// Error response, contains API error code and message.
+        case Failure(String, String)
+    }
     
     /// The API key (also known as APPID).
     private let APIKey: String;
@@ -105,19 +107,30 @@ class WeatherClient {
         Alamofire.request(.GET, WeatherClient.APIBaseURL, parameters: finalParameters).responseJSON { response in
             switch response.result {
                 case .Success(let value):
-                    let JSON = value as! [String: AnyObject]
-                    if let errorCode = JSON["cod"], errorMessage = JSON["message"] {
-                        let error = NSError(domain: WeatherErrorDomain, code: WeatherError.APIFailure.rawValue, userInfo: [
-                            NSLocalizedDescriptionKey: "API returned error \(errorCode): \(errorMessage)"
-                        ])
-                        handler(WeatherResult.Failure(error))
-                    } else {
-                        let data = WeatherData(rawData: JSON)
-                        handler(WeatherResult.Success(data))
+                    switch WeatherClient.resultFromResponse(value as! [String: AnyObject]) {
+                        case .Success(let data):
+                            handler(WeatherResult.Success(data))
+                        case .Failure(let code, let message):
+                            let error = NSError(domain: WeatherErrorDomain, code: WeatherError.APIFailure.rawValue, userInfo: [
+                                NSLocalizedDescriptionKey: "API returned error \(code): \(message)"
+                            ])
+                            handler(WeatherResult.Failure(error))
                     }
                 case .Failure(let error):
                     handler(WeatherResult.Failure(error))
             }
+        }
+    }
+    
+    private static func resultFromResponse(rawData: [String: AnyObject]) -> Result {
+        if let errorCode = rawData["cod"], errorMessage = rawData["message"] {
+            return Result.Failure(String(errorCode), String(errorMessage))
+        } else {
+            let data = WeatherData(
+                temperature: rawData["main"]!["temp"] as! Double,
+                humidity: rawData["main"]!["humidity"] as! Double,
+                pressure: rawData["main"]!["pressure"] as! Double)
+            return Result.Success(data)
         }
     }
 }
