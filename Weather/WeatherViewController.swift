@@ -17,7 +17,8 @@ class WeatherViewController: UIViewController, CLLocationManagerDelegate, UIText
     @IBOutlet weak var locationField: UITextField!
     
     private var locationManager = CLLocationManager()
-    private var location: CLLocation?
+    private var receivedInitialLocation = false
+    private var weatherLocation: WeatherLocation?
     private var weatherClient = WeatherClient()
     
     override func viewDidLoad() {
@@ -86,14 +87,15 @@ class WeatherViewController: UIViewController, CLLocationManagerDelegate, UIText
             
             // Stop high-precision location updates after obtaining the initial location. Subsequent
             // updates will come from significant location changes.
-            if self.location == nil {
+            if !self.receivedInitialLocation {
                 self.locationManager.stopUpdatingLocation()
                 self.locationManager.startMonitoringSignificantLocationChanges()
+                self.receivedInitialLocation = true
             }
-            self.location = location
             
             print("Fetching weather for (\(location.coordinate.latitude), \(location.coordinate.longitude)")
-            weatherClient.fetchWeatherForCoordinate(location.coordinate, handler: self.finishUpdatingWeather)
+            self.weatherLocation = .Precise(location.coordinate)
+            self.weatherClient.fetchWeatherForLocation(self.weatherLocation!, handler: self.finishUpdatingWeather)
             
             let geocoder = CLGeocoder()
             geocoder.reverseGeocodeLocation(location, completionHandler: { (placemarks, ErrorType) in
@@ -108,27 +110,28 @@ class WeatherViewController: UIViewController, CLLocationManagerDelegate, UIText
     }
     
     func performScheduledWeatherUpdate() {
-        if let location = self.location {
+        if let weatherLocation = self.weatherLocation {
             print("Performing scheduled weather update")
-            weatherClient.fetchWeatherForCoordinate(location.coordinate, handler: self.finishUpdatingWeather)
+            self.weatherClient.fetchWeatherForLocation(weatherLocation, handler: self.finishUpdatingWeather)
         } else {
             print("Skipping scheduled weather update beacuse location is unknown")
         }
     }
     
     @IBAction func updateLocation() {
-        if let locationQuery = self.locationField.text where !locationQuery.isEmpty {
+        if let location = self.locationField.text where !location.isEmpty {
             self.locationField.text = nil
             self.locationField.resignFirstResponder()
             
-            let placeName = locationQuery.capitalizedString
+            let placeName = location.capitalizedString
             self.placeNameLabel.text = placeName
             
             self.temperatureLabel.hidden = true
             self.activityIndicator.startAnimating()
             
             print("Fetching weather for \(placeName)")
-            weatherClient.fetchWeatherForLocation(locationQuery, handler: self.finishUpdatingWeather)
+            self.weatherLocation = .Address(location)
+            self.weatherClient.fetchWeatherForLocation(self.weatherLocation!, handler: self.finishUpdatingWeather)
         }
     }
     

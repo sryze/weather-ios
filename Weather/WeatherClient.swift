@@ -20,6 +20,11 @@ enum WeatherResult {
     case Failure(NSError)
 }
 
+enum WeatherLocation {
+    case Precise(CLLocationCoordinate2D)
+    case Address(String)
+}
+
 class WeatherData {
     
     let temperature: Double
@@ -42,12 +47,13 @@ class WeatherClient {
     private static let APIBaseURL = "http://api.openweathermap.org/data/2.5/weather"
     private static let APIKey = "df8126a16e5ad6f20b8185627628b7f5"
     
-    func fetchWeatherForCoordinate(coordinate: CLLocationCoordinate2D, handler: (WeatherResult) -> Void) {
-        self.fetchWeather(["lat": coordinate.latitude, "lon": coordinate.longitude], handler: handler)
-    }
-    
-    func fetchWeatherForLocation(location: String, handler: (WeatherResult) -> Void) {
-        self.fetchWeather(["q": location], handler: handler)
+    func fetchWeatherForLocation(location: WeatherLocation, handler: (WeatherResult) -> Void) {
+        switch location {
+            case .Precise(let coordinate):
+                self.fetchWeather(["lat": coordinate.latitude, "lon": coordinate.longitude], handler: handler)
+            case .Address(let query):
+                self.fetchWeather(["q": query], handler: handler)
+        }
     }
     
     func fetchWeather(parameters: [String: AnyObject], handler: (WeatherResult) -> Void) {
