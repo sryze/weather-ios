@@ -65,8 +65,16 @@ class WeatherData: CustomStringConvertible {
 class WeatherClient {
     /// The base URL for the OpenWeatherMap API.
     private static let APIBaseURL = "http://api.openweathermap.org/data/2.5/weather"
+    
     /// The API key (also known as APPID).
-    private static let APIKey = "df8126a16e5ad6f20b8185627628b7f5"
+    private let APIKey: String;
+    
+    /// Initializes the WeatherClient with a given API key (APPID).
+    ///
+    /// - Parameter APIKey: The API key (APPID) to be used for OpenWeatherMap API requests.
+    init(APIKey: String) {
+        self.APIKey = APIKey
+    }
     
     /// Fetches current weather data at the specified location.
     ///
@@ -92,7 +100,7 @@ class WeatherClient {
     /// - SeeAlso: `fetchWeatherForLocation(_:handler:)`
     func fetchWeatherWithParameters(parameters: [String: AnyObject], handler: (WeatherResult) -> Void) {
         var finalParameters = parameters
-        finalParameters["APPID"] = WeatherClient.APIKey
+        finalParameters["APPID"] = self.APIKey
         
         Alamofire.request(.GET, WeatherClient.APIBaseURL, parameters: finalParameters).responseJSON { response in
             switch response.result {

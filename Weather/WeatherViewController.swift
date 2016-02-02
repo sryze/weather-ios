@@ -19,7 +19,7 @@ class WeatherViewController: UIViewController, CLLocationManagerDelegate, UIText
     private var locationManager = CLLocationManager()
     private var receivedInitialLocation = false
     private var weatherLocation: WeatherLocation?
-    private var weatherClient = WeatherClient()
+    private var weatherClient = WeatherClient(APIKey: "df8126a16e5ad6f20b8185627628b7f5")
     
     override func viewDidLoad() {
         super.viewDidLoad()
