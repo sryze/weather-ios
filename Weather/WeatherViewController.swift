@@ -127,7 +127,7 @@ class WeatherViewController: UIViewController, CLLocationManagerDelegate, UIText
             self.temperatureLabel.hidden = true
             self.activityIndicator.startAnimating()
             
-            geocoder.geocodeAddressString(address, completionHandler: { (placemarks, error) -> Void in
+            geocoder.geocodeAddressString(address, completionHandler: { (placemarks, error) in
                 self.placeNameLabel.hidden = false
                 self.placeNameLabel.text = address
                 
