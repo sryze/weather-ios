@@ -1,5 +1,5 @@
 //
-//  ViewController.swift
+//  WeatherViewController.swift
 //  Weather
 //
 //  Created by Sergey on 22/01/16.
@@ -34,6 +34,10 @@ class WeatherViewController: UIViewController, CLLocationManagerDelegate, UIText
             selector: Selector("performScheduledWeatherUpdate"),
             userInfo: nil,
             repeats: true)
+        
+        NSUserDefaults.standardUserDefaults().registerDefaults([
+            "TemperatureUnits": "Celsius"
+        ])
     }
     
     override func viewWillAppear(animated: Bool) {
@@ -96,7 +100,7 @@ class WeatherViewController: UIViewController, CLLocationManagerDelegate, UIText
             self.weatherLocation = .Precise(location.coordinate)
             
             print("Fetching weather for \(self.weatherLocation!)")
-            self.weatherClient.fetchWeatherForLocation(self.weatherLocation!, handler: self.finishUpdatingWeather)
+            self.weatherClient.fetchWeatherForLocation(self.weatherLocation!, handler: self.finishFetchingWeather)
             
             self.geocoder.reverseGeocodeLocation(location, completionHandler: { (placemarks, error) in
                 if let placemark = placemarks?.last,
@@ -112,7 +116,7 @@ class WeatherViewController: UIViewController, CLLocationManagerDelegate, UIText
     func performScheduledWeatherUpdate() {
         if let weatherLocation = self.weatherLocation {
             print("Performing scheduled weather update")
-            self.weatherClient.fetchWeatherForLocation(weatherLocation, handler: self.finishUpdatingWeather)
+            self.weatherClient.fetchWeatherForLocation(weatherLocation, handler: self.finishFetchingWeather)
         } else {
             print("Skipping scheduled weather update beacuse location is unknown")
         }
@@ -142,19 +146,19 @@ class WeatherViewController: UIViewController, CLLocationManagerDelegate, UIText
                 }
                 
                 print("Fetching weather for \(self.weatherLocation!)")
-                self.weatherClient.fetchWeatherForLocation(self.weatherLocation!, handler: self.finishUpdatingWeather)
+                self.weatherClient.fetchWeatherForLocation(self.weatherLocation!, handler: self.finishFetchingWeather)
             })
         }
     }
     
-    private func finishUpdatingWeather(result: WeatherResult) {
+    private func finishFetchingWeather(result: WeatherResult) {
         self.activityIndicator.stopAnimating()
         self.temperatureLabel.hidden = false
         
         switch result {
             case .Success(let data):
                 print("Successfully fetched weather data: \(data)")
-                self.temperatureLabel.text = String(format: "%+.0f °C", round(data.temperatureInCelsius))
+                self.updateWeatherFromData(data)
             case .Failure(let error):
                 print("Failed to fetch weather data: \(error)")
                 let alertController = UIAlertController(
@@ -166,6 +170,21 @@ class WeatherViewController: UIViewController, CLLocationManagerDelegate, UIText
                     style: .Default,
                     handler: nil))
                 self.presentViewController(alertController, animated: true, completion: nil)
+        }
+    }
+    
+    private func updateWeatherFromData(data: WeatherData) {
+        if let temperatureUnits = NSUserDefaults.standardUserDefaults().stringForKey("TemperatureUnits") {
+            self.temperatureLabel.text = {
+                switch temperatureUnits {
+                    case "Celsius":
+                        return String(format: "%+.0f °C", round(data.temperatureInCelsius))
+                    case "Farenheit":
+                        return String(format: "%+.0f °F", round(data.temperatureInFarenheit))
+                    default:
+                        return String(format: "%.1f K", data.temperature)
+                }
+            }()
         }
     }
 }

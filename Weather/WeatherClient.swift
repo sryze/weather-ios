@@ -41,9 +41,13 @@ enum WeatherLocation: CustomStringConvertible {
 struct WeatherData: CustomStringConvertible {
     /// Current temperature as absolute value (i.e. in Kelvin).
     let temperature: Double
-    /// Current temperature converted to Celsius degrees.
+    /// Current temperature in to Celsius degrees.
     var temperatureInCelsius: Double {
         return self.temperature - 273.15
+    }
+    /// Current temperature in to Farenheit degrees.
+    var temperatureInFarenheit: Double {
+        return self.temperatureInCelsius * 1.8  + 32
     }
     
     /// Current humidity (unused).
