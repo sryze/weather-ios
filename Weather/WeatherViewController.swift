@@ -34,10 +34,6 @@ class WeatherViewController: UIViewController, CLLocationManagerDelegate, UIText
             selector: Selector("performScheduledWeatherUpdate"),
             userInfo: nil,
             repeats: true)
-        
-        NSUserDefaults.standardUserDefaults().registerDefaults([
-            "TemperatureUnits": "Celsius"
-        ])
     }
     
     override func viewWillAppear(animated: Bool) {
@@ -174,17 +170,15 @@ class WeatherViewController: UIViewController, CLLocationManagerDelegate, UIText
     }
     
     private func updateWeatherFromData(data: WeatherData) {
-        if let temperatureUnits = NSUserDefaults.standardUserDefaults().stringForKey("TemperatureUnits") {
-            self.temperatureLabel.text = {
-                switch temperatureUnits {
-                    case "Celsius":
-                        return String(format: "%+.0f °C", round(data.temperatureInCelsius))
-                    case "Farenheit":
-                        return String(format: "%+.0f °F", round(data.temperatureInFarenheit))
-                    default:
-                        return String(format: "%.1f K", data.temperature)
-                }
-            }()
-        }
+        self.temperatureLabel.text = {
+            switch Settings().temperatureScale {
+                case .Celsius:
+                    return String(format: "%+.0f °C", round(data.temperatureInCelsius))
+                case .Farenheit:
+                    return String(format: "%+.0f °F", round(data.temperatureInFarenheit))
+                default:
+                    return String(format: "%.1f K", data.temperature)
+            }
+        }()
     }
 }

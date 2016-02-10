@@ -17,44 +17,41 @@ class SettingsViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        if let temperatureUnits = NSUserDefaults.standardUserDefaults().stringForKey("TemperatureUnits") {
-            self.selectTemperatureUnitsCell({
-                switch temperatureUnits {
-                    case "Celsius":
-                        return self.celsiusCell
-                    case "Farenheit":
-                        return self.farenheitCell
-                    default:
-                        return self.kelvinCell
-                }
-            }())
-        }
+        self.selectTemperatureUnitsCell({
+            switch Settings().temperatureScale {
+                case .Celsius:
+                    return self.celsiusCell
+                case .Farenheit:
+                    return self.farenheitCell
+                default:
+                    return self.kelvinCell
+            }
+        }())
     }
     
     override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
         let cell = super.tableView(super.tableView, cellForRowAtIndexPath: indexPath)
         self.selectTemperatureUnitsCell(cell)
         
-        let temperatureUnits: String = {
+        Settings().temperatureScale = {
             switch cell {
                 case self.celsiusCell:
-                    return "Celsius"
+                    return .Celsius
                 case self.farenheitCell:
-                    return "Farenheit"
+                    return .Farenheit
                 default:
-                    return "Kelvin"
+                    return .Kelvin
             }
         }()
-        NSUserDefaults.standardUserDefaults().setValue(temperatureUnits, forKey: "TemperatureUnits")
     }
     
     private func selectTemperatureUnitsCell(selectedCell: UITableViewCell) {
-        let temperatureUnitCells = [
+        let temperatureScaleCells = [
             self.celsiusCell!,
             self.farenheitCell!,
             self.kelvinCell!
         ]
-        for cell in temperatureUnitCells {
+        for cell in temperatureScaleCells {
             cell.accessoryType = cell == selectedCell ? .Checkmark : .None
         }
     }

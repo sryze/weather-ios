@@ -16,6 +16,7 @@
 		A52925A41C51EDC600CB4365 /* WeatherUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A52925A31C51EDC600CB4365 /* WeatherUITests.swift */; };
 		A546DC621C52390F004DC188 /* WeatherClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = A546DC611C52390F004DC188 /* WeatherClient.swift */; };
 		A56A4F191C69CFEB006DC98F /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A56A4F181C69CFEB006DC98F /* SettingsViewController.swift */; };
+		A57AC0B81C6AE7AB0069E0A4 /* Settings.swift in Sources */ = {isa = PBXBuildFile; fileRef = A57AC0B71C6AE7AB0069E0A4 /* Settings.swift */; };
 		ABF5E50CA0BDFF8E260A299D /* Pods_Weather.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 45DC3E0A2CE7DCBBEBDE2DFD /* Pods_Weather.framework */; };
 /* End PBXBuildFile section */
 
@@ -55,6 +56,7 @@
 		A52925A51C51EDC600CB4365 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		A546DC611C52390F004DC188 /* WeatherClient.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WeatherClient.swift; sourceTree = "<group>"; };
 		A56A4F181C69CFEB006DC98F /* SettingsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsViewController.swift; sourceTree = "<group>"; };
+		A57AC0B71C6AE7AB0069E0A4 /* Settings.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Settings.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -130,6 +132,7 @@
 				A529258F1C51EDC600CB4365 /* Info.plist */,
 				A529258C1C51EDC600CB4365 /* LaunchScreen.storyboard */,
 				A52925871C51EDC600CB4365 /* Main.storyboard */,
+				A57AC0B71C6AE7AB0069E0A4 /* Settings.swift */,
 				A56A4F181C69CFEB006DC98F /* SettingsViewController.swift */,
 				A546DC611C52390F004DC188 /* WeatherClient.swift */,
 				A52925851C51EDC600CB4365 /* WeatherViewController.swift */,
@@ -338,6 +341,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				A52925861C51EDC600CB4365 /* WeatherViewController.swift in Sources */,
+				A57AC0B81C6AE7AB0069E0A4 /* Settings.swift in Sources */,
 				A52925841C51EDC600CB4365 /* AppDelegate.swift in Sources */,
 				A546DC621C52390F004DC188 /* WeatherClient.swift in Sources */,
 				A56A4F191C69CFEB006DC98F /* SettingsViewController.swift in Sources */,
