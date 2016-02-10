@@ -17,10 +17,12 @@ class WeatherViewController: UIViewController, CLLocationManagerDelegate, UIText
     @IBOutlet weak var locationField: UITextField!
     
     private let locationManager = CLLocationManager()
-    private var receivedInitialLocation = false
-    private var weatherLocation: WeatherLocation?
     private let weatherClient = WeatherClient(APIKey: "df8126a16e5ad6f20b8185627628b7f5")
     private let geocoder = CLGeocoder()
+    
+    private var receivedInitialLocation = false
+    private var weatherLocation: WeatherLocation?
+    private var weatherData: WeatherData?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -34,11 +36,7 @@ class WeatherViewController: UIViewController, CLLocationManagerDelegate, UIText
             selector: Selector("performScheduledWeatherUpdate"),
             userInfo: nil,
             repeats: true)
-    }
-    
-    override func viewWillAppear(animated: Bool) {
-        super.viewWillAppear(animated)
-
+        
         if CLLocationManager.significantLocationChangeMonitoringAvailable() {
             self.locationManager.startUpdatingLocation()
         } else {
@@ -49,6 +47,14 @@ class WeatherViewController: UIViewController, CLLocationManagerDelegate, UIText
         self.placeNameLabel.hidden = true
         self.temperatureLabel.hidden = true
         self.activityIndicator.startAnimating()
+    }
+    
+    override func viewWillAppear(animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        if let weatherData = self.weatherData {
+            self.updateDisplayedWeatherFromData(weatherData)
+        }
     }
     
     override func viewDidAppear(animated: Bool) {
@@ -154,7 +160,8 @@ class WeatherViewController: UIViewController, CLLocationManagerDelegate, UIText
         switch result {
             case .Success(let data):
                 print("Successfully fetched weather data: \(data)")
-                self.updateWeatherFromData(data)
+                self.weatherData = data
+                self.updateDisplayedWeatherFromData(data)
             case .Failure(let error):
                 print("Failed to fetch weather data: \(error)")
                 let alertController = UIAlertController(
@@ -169,7 +176,7 @@ class WeatherViewController: UIViewController, CLLocationManagerDelegate, UIText
         }
     }
     
-    private func updateWeatherFromData(data: WeatherData) {
+    private func updateDisplayedWeatherFromData(data: WeatherData) {
         self.temperatureLabel.text = {
             switch Settings().temperatureScale {
                 case .Celsius:
