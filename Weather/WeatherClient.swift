@@ -17,7 +17,7 @@ enum WeatherError: Int {
 
 enum WeatherResult {
     /// Weather request succeeded.
-    case Success(WeatherData)
+    case Success(data: WeatherData)
     /// Weather request resulted in a nerror.
     case Failure(NSError)
 }
@@ -113,7 +113,7 @@ class WeatherClient {
                 case .Success(let value):
                     switch WeatherClient.resultFromResponse(value as! [String: AnyObject]) {
                         case .Success(let data):
-                            handler(WeatherResult.Success(data))
+                            handler(WeatherResult.Success(data: data))
                         case .Failure(let code, let message):
                             let error = NSError(domain: WeatherErrorDomain, code: WeatherError.APIFailure.rawValue, userInfo: [
                                 NSLocalizedDescriptionKey: "API returned error \(code): \(message)"
