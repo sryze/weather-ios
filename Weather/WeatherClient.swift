@@ -40,20 +40,26 @@ enum WeatherLocation: CustomStringConvertible {
 
 struct WeatherData: CustomStringConvertible {
     /// Current temperature as absolute value (i.e. in Kelvin).
-    let temperature: Double
+    let temperature: Double?
     /// Current temperature in to Celsius degrees.
-    var temperatureInCelsius: Double {
-        return self.temperature - 273.15
+    var temperatureInCelsius: Double? {
+        if let temperature = self.temperature {
+            return temperature - 273.15
+        }
+        return nil
     }
     /// Current temperature in to Farenheit degrees.
-    var temperatureInFarenheit: Double {
-        return self.temperatureInCelsius * 1.8  + 32
+    var temperatureInFarenheit: Double? {
+        if let temperatureInCelsius = self.temperatureInCelsius {
+            return temperatureInCelsius * 1.8  + 32
+        }
+        return nil
     }
     
     /// Current humidity (unused).
-    let humidity: Double
+    let humidity: Double?
     /// Current pressure (unused).
-    let pressure: Double
+    let pressure: Double?
     
     var description: String {
         return "<WeatherData: temperature=\(self.temperature), humidity=\(self.humidity), pressure=\(self.pressure)>"
@@ -131,9 +137,9 @@ class WeatherClient {
             return Result.Failure(String(errorCode), String(errorMessage))
         } else {
             let data = WeatherData(
-                temperature: rawData["main"]!["temp"] as! Double,
-                humidity: rawData["main"]!["humidity"] as! Double,
-                pressure: rawData["main"]!["pressure"] as! Double)
+                temperature: rawData["main"]?["temp"] as? Double,
+                humidity: rawData["main"]?["humidity"] as? Double,
+                pressure: rawData["main"]?["pressure"] as? Double)
             return Result.Success(data)
         }
     }

@@ -179,12 +179,14 @@ class WeatherViewController: UIViewController, CLLocationManagerDelegate, UIText
     private func updateDisplayedWeatherFromData(data: WeatherData) {
         self.temperatureLabel.text = {
             switch Settings().temperatureScale {
+                case _ where data.temperature == nil:
+                    return ":("
                 case .Celsius:
-                    return String(format: "%+.0f °C", round(data.temperatureInCelsius))
+                    return String(format: "%+.0f °C", round(data.temperatureInCelsius!))
                 case .Farenheit:
-                    return String(format: "%+.0f °F", round(data.temperatureInFarenheit))
+                    return String(format: "%+.0f °F", round(data.temperatureInFarenheit!))
                 default:
-                    return String(format: "%.1f K", data.temperature)
+                    return String(format: "%.1f K", data.temperature!)
             }
         }()
     }
