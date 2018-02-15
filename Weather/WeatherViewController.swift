@@ -24,8 +24,16 @@ class WeatherViewController: UIViewController, CLLocationManagerDelegate, UIText
     private var weatherLocation: WeatherLocation?
     private var weatherData: WeatherData?
     
+    private var settings: Settings = {
+        return Settings()
+    }()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        if let savedAddress = settings.address {
+            updateLocation(fromAddress: savedAddress)
+        }
         
         self.locationManager.delegate = self
         self.locationManager.requestWhenInUseAuthorization()
@@ -124,32 +132,37 @@ class WeatherViewController: UIViewController, CLLocationManagerDelegate, UIText
         }
     }
     
+    func updateLocation(fromAddress address: String) {
+        self.locationField.text = nil
+        self.locationField.resignFirstResponder()
+        
+        self.placeNameLabel.isHidden = true
+        self.temperatureLabel.isHidden = true
+        self.activityIndicator.startAnimating()
+        
+        geocoder.geocodeAddressString(address, completionHandler: { (placemarks, error) in
+            self.placeNameLabel.isHidden = false
+            self.placeNameLabel.text = address
+            
+            if let placemark = placemarks?.last,
+                let city = placemark.locality,
+                let country = placemark.country,
+                let location = placemark.location {
+                self.placeNameLabel.text = "\(city), \(country)"
+                self.weatherLocation = .Precise(location.coordinate)
+            } else {
+                self.weatherLocation = .Address(address)
+            }
+            
+            print("Fetching weather for \(self.weatherLocation!)")
+            self.weatherClient.fetchWeatherForLocation(location: self.weatherLocation!, handler: self.finishFetchingWeather)
+        })
+    }
+    
     @IBAction func updateLocation() {
         if let address = self.locationField.text, !address.isEmpty {
-            self.locationField.text = nil
-            self.locationField.resignFirstResponder()
-            
-            self.placeNameLabel.isHidden = true
-            self.temperatureLabel.isHidden = true
-            self.activityIndicator.startAnimating()
-            
-            geocoder.geocodeAddressString(address, completionHandler: { (placemarks, error) in
-                self.placeNameLabel.isHidden = false
-                self.placeNameLabel.text = address
-                
-                if let placemark = placemarks?.last,
-                   let city = placemark.locality,
-                   let country = placemark.country,
-                   let location = placemark.location {
-                    self.placeNameLabel.text = "\(city), \(country)"
-                    self.weatherLocation = .Precise(location.coordinate)
-                } else {
-                    self.weatherLocation = .Address(address)
-                }
-                
-                print("Fetching weather for \(self.weatherLocation!)")
-                self.weatherClient.fetchWeatherForLocation(location: self.weatherLocation!, handler: self.finishFetchingWeather)
-            })
+            updateLocation(fromAddress: address)
+            settings.address = address
         }
     }
     
@@ -178,7 +191,7 @@ class WeatherViewController: UIViewController, CLLocationManagerDelegate, UIText
     
     private func updateDisplayedWeatherFromData(data: WeatherData) {
         self.temperatureLabel.text = {
-            switch Settings().temperatureScale {
+            switch settings.temperatureScale {
                 case _ where data.temperature == nil:
                     return ":("
                 case .Celsius:
