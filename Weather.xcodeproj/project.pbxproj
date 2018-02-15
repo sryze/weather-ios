@@ -522,10 +522,10 @@
 				DEVELOPMENT_TEAM = R8U89LKRGR;
 				INFOPLIST_FILE = Weather/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = szx.SimpleWeather;
+				PRODUCT_BUNDLE_IDENTIFIER = com.gitlab.szx.weather;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "f3250b8b-a8cb-4aa3-840e-897666d26a5b";
-				PROVISIONING_PROFILE_SPECIFIER = SimpleWeatherDistribution;
+				PROVISIONING_PROFILE = "015a78e3-db32-448e-a03f-9e47f3f67ca1";
+				PROVISIONING_PROFILE_SPECIFIER = WeatherDistribution;
 				SWIFT_VERSION = 4.0;
 			};
 			name = Debug;
@@ -541,10 +541,10 @@
 				DEVELOPMENT_TEAM = R8U89LKRGR;
 				INFOPLIST_FILE = Weather/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = szx.SimpleWeather;
+				PRODUCT_BUNDLE_IDENTIFIER = com.gitlab.szx.weather;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "f3250b8b-a8cb-4aa3-840e-897666d26a5b";
-				PROVISIONING_PROFILE_SPECIFIER = SimpleWeatherDistribution;
+				PROVISIONING_PROFILE = "015a78e3-db32-448e-a03f-9e47f3f67ca1";
+				PROVISIONING_PROFILE_SPECIFIER = WeatherDistribution;
 				SWIFT_VERSION = 4.0;
 			};
 			name = Release;
