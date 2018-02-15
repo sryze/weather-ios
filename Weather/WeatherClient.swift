@@ -62,7 +62,7 @@ struct WeatherData: CustomStringConvertible {
     let pressure: Double?
     
     var description: String {
-        return "<WeatherData: temperature=\(self.temperature), humidity=\(self.humidity), pressure=\(self.pressure)>"
+        return "<WeatherData: temperature=\(String(describing: self.temperature)), humidity=\(String(describing: self.humidity)), pressure=\(String(describing: self.pressure))>"
     }
 }
 
@@ -94,12 +94,12 @@ class WeatherClient {
     /// - Parameter handler: A callback invoked when the request is complete.
     ///
     /// - SeeAlso: `fetchWeather(_:handler:)`
-    func fetchWeatherForLocation(location: WeatherLocation, handler: (WeatherResult) -> Void) {
+    func fetchWeatherForLocation(location: WeatherLocation, handler: @escaping (WeatherResult) -> Void) {
         switch location {
             case .Precise(let coordinate):
-                self.fetchWeatherWithParameters(["lat": coordinate.latitude, "lon": coordinate.longitude], handler: handler)
+                self.fetchWeatherWithParameters(parameters: ["lat": coordinate.latitude as AnyObject, "lon": coordinate.longitude as AnyObject], handler: handler)
             case .Address(let query):
-                self.fetchWeatherWithParameters(["q": query], handler: handler)
+                self.fetchWeatherWithParameters(parameters: ["q": query as AnyObject], handler: handler)
         }
     }
     
@@ -110,14 +110,14 @@ class WeatherClient {
     /// - Parameter handler: A callback invoked when the request is complete.
     ///
     /// - SeeAlso: `fetchWeatherForLocation(_:handler:)`
-    func fetchWeatherWithParameters(parameters: [String: AnyObject], handler: (WeatherResult) -> Void) {
+    func fetchWeatherWithParameters(parameters: [String: AnyObject], handler: @escaping (WeatherResult) -> Void) {
         var finalParameters = parameters
-        finalParameters["APPID"] = self.APIKey
+        finalParameters["APPID"] = self.APIKey as AnyObject
         
-        Alamofire.request(.GET, WeatherClient.APIBaseURL, parameters: finalParameters).responseJSON { response in
+        Alamofire.request(WeatherClient.APIBaseURL, method: .get, parameters: finalParameters).responseJSON { response in
             switch response.result {
-                case .Success(let value):
-                    switch WeatherClient.resultFromResponse(value as! [String: AnyObject]) {
+                case .success(let value):
+                    switch WeatherClient.resultFromResponse(rawData: value as! [String: AnyObject]) {
                         case .Success(let data):
                             handler(WeatherResult.Success(data: data))
                         case .Failure(let code, let message):
@@ -126,15 +126,15 @@ class WeatherClient {
                             ])
                             handler(WeatherResult.Failure(error))
                     }
-                case .Failure(let error):
-                    handler(WeatherResult.Failure(error))
+                case .failure(let error):
+                    handler(WeatherResult.Failure(error as NSError))
             }
         }
     }
     
     private static func resultFromResponse(rawData: [String: AnyObject]) -> Result {
-        if let errorCode = rawData["cod"], errorMessage = rawData["message"] {
-            return Result.Failure(String(errorCode), String(errorMessage))
+        if let errorCode = rawData["cod"], let errorMessage = rawData["message"] {
+            return Result.Failure(String(describing: errorCode), String(describing: errorMessage))
         } else {
             let data = WeatherData(
                 temperature: rawData["main"]?["temp"] as? Double,

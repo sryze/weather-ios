@@ -15,11 +15,11 @@ class Settings {
         case Farenheit
     }
     
-    let userDefaults: NSUserDefaults
+    let userDefaults: UserDefaults
     
     var temperatureScale: TemperatureScale {
         get {
-            let scale = self.userDefaults.stringForKey("TemperatureScale") ?? TemperatureScale.Kelvin.rawValue
+            let scale = self.userDefaults.string(forKey: "TemperatureScale") ?? TemperatureScale.Kelvin.rawValue
             return TemperatureScale(rawValue: scale)!
         }
         set {
@@ -27,11 +27,11 @@ class Settings {
         }
     }
     
-    init(userDefaults: NSUserDefaults) {
+    init(userDefaults: UserDefaults) {
         self.userDefaults = userDefaults
     }
     
     convenience init() {
-        self.init(userDefaults: NSUserDefaults.standardUserDefaults())
+        self.init(userDefaults: UserDefaults.standard)
     }
 }

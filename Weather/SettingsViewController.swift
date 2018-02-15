@@ -17,7 +17,7 @@ class SettingsViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        self.selectTemperatureUnitsCell({
+        self.selectTemperatureUnitsCell(selectedCell: {
             switch Settings().temperatureScale {
                 case .Celsius:
                     return self.celsiusCell
@@ -29,9 +29,9 @@ class SettingsViewController: UITableViewController {
         }())
     }
     
-    override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
-        let cell = super.tableView(super.tableView, cellForRowAtIndexPath: indexPath)
-        self.selectTemperatureUnitsCell(cell)
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let cell = super.tableView(super.tableView, cellForRowAt: indexPath)
+        self.selectTemperatureUnitsCell(selectedCell: cell)
         
         Settings().temperatureScale = {
             switch cell {
@@ -52,7 +52,7 @@ class SettingsViewController: UITableViewController {
             self.kelvinCell!
         ]
         for cell in temperatureScaleCells {
-            cell.accessoryType = cell == selectedCell ? .Checkmark : .None
+            cell.accessoryType = cell == selectedCell ? .checkmark : .none
         }
     }
 }

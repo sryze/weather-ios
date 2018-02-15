@@ -31,9 +31,9 @@ class WeatherViewController: UIViewController, CLLocationManagerDelegate, UIText
         self.locationManager.requestWhenInUseAuthorization()
         self.locationManager.requestAlwaysAuthorization()
         
-        NSTimer.scheduledTimerWithTimeInterval(600,
+        Timer.scheduledTimer(timeInterval: 600,
             target: self,
-            selector: Selector("performScheduledWeatherUpdate"),
+            selector: #selector(performScheduledWeatherUpdate),
             userInfo: nil,
             repeats: true)
         
@@ -44,51 +44,51 @@ class WeatherViewController: UIViewController, CLLocationManagerDelegate, UIText
             self.locationManager.startUpdatingLocation()
         }
         
-        self.placeNameLabel.hidden = true
-        self.temperatureLabel.hidden = true
+        self.placeNameLabel.isHidden = true
+        self.temperatureLabel.isHidden = true
         self.activityIndicator.startAnimating()
     }
     
-    override func viewWillAppear(animated: Bool) {
+    override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
         if let weatherData = self.weatherData {
-            self.updateDisplayedWeatherFromData(weatherData)
+            self.updateDisplayedWeatherFromData(data: weatherData)
         }
     }
     
-    override func viewDidAppear(animated: Bool) {
+    override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
         if !CLLocationManager.locationServicesEnabled() {
             let alertController = UIAlertController(
                 title: "Error",
                 message: "Location services are not enabled on this device",
-                preferredStyle: .Alert)
+                preferredStyle: .alert)
             alertController.addAction(UIAlertAction(
                 title: "OK",
-                style: .Default,
+                style: .default,
                 handler: nil))
-            self.presentViewController(alertController, animated: true, completion: nil)
+            self.present(alertController, animated: true, completion: nil)
         }
     }
     
-    override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         self.view.endEditing(true)
     }
     
-    func textFieldShouldReturn(textField: UITextField) -> Bool {
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         if textField == self.locationField {
             self.updateLocation()
         }
         return true
     }
     
-    func locationManager(manager: CLLocationManager, didFailWithError error: NSError) {
+    func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
         print("Location manager failed with error: \(error)")
     }
     
-    func locationManager(manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         if let location = locations.last {
             print("Obtained device location: \(location)")
             
@@ -102,45 +102,45 @@ class WeatherViewController: UIViewController, CLLocationManagerDelegate, UIText
             self.weatherLocation = .Precise(location.coordinate)
             
             print("Fetching weather for \(self.weatherLocation!)")
-            self.weatherClient.fetchWeatherForLocation(self.weatherLocation!, handler: self.finishFetchingWeather)
+            self.weatherClient.fetchWeatherForLocation(location: self.weatherLocation!, handler: self.finishFetchingWeather)
             
             self.geocoder.reverseGeocodeLocation(location, completionHandler: { (placemarks, error) in
                 if let placemark = placemarks?.last,
-                       city = placemark.locality,
-                       country = placemark.country {
+                   let city = placemark.locality,
+                   let country = placemark.country {
                     self.placeNameLabel.text =  "\(city), \(country)"
-                    self.placeNameLabel.hidden = false
+                    self.placeNameLabel.isHidden = false
                 }
             })
         }
     }
     
-    func performScheduledWeatherUpdate() {
+    @objc func performScheduledWeatherUpdate() {
         if let weatherLocation = self.weatherLocation {
             print("Performing scheduled weather update")
-            self.weatherClient.fetchWeatherForLocation(weatherLocation, handler: self.finishFetchingWeather)
+            self.weatherClient.fetchWeatherForLocation(location: weatherLocation, handler: self.finishFetchingWeather)
         } else {
             print("Skipping scheduled weather update beacuse location is unknown")
         }
     }
     
     @IBAction func updateLocation() {
-        if let address = self.locationField.text where !address.isEmpty {
+        if let address = self.locationField.text, !address.isEmpty {
             self.locationField.text = nil
             self.locationField.resignFirstResponder()
             
-            self.placeNameLabel.hidden = true
-            self.temperatureLabel.hidden = true
+            self.placeNameLabel.isHidden = true
+            self.temperatureLabel.isHidden = true
             self.activityIndicator.startAnimating()
             
             geocoder.geocodeAddressString(address, completionHandler: { (placemarks, error) in
-                self.placeNameLabel.hidden = false
+                self.placeNameLabel.isHidden = false
                 self.placeNameLabel.text = address
                 
                 if let placemark = placemarks?.last,
-                       city = placemark.locality,
-                       country = placemark.country,
-                       location = placemark.location {
+                   let city = placemark.locality,
+                   let country = placemark.country,
+                   let location = placemark.location {
                     self.placeNameLabel.text = "\(city), \(country)"
                     self.weatherLocation = .Precise(location.coordinate)
                 } else {
@@ -148,31 +148,31 @@ class WeatherViewController: UIViewController, CLLocationManagerDelegate, UIText
                 }
                 
                 print("Fetching weather for \(self.weatherLocation!)")
-                self.weatherClient.fetchWeatherForLocation(self.weatherLocation!, handler: self.finishFetchingWeather)
+                self.weatherClient.fetchWeatherForLocation(location: self.weatherLocation!, handler: self.finishFetchingWeather)
             })
         }
     }
     
     private func finishFetchingWeather(result: WeatherResult) {
         self.activityIndicator.stopAnimating()
-        self.temperatureLabel.hidden = false
+        self.temperatureLabel.isHidden = false
         
         switch result {
             case .Success(let data):
                 print("Successfully fetched weather data: \(data)")
                 self.weatherData = data
-                self.updateDisplayedWeatherFromData(data)
+                self.updateDisplayedWeatherFromData(data: data)
             case .Failure(let error):
                 print("Failed to fetch weather data: \(error)")
                 let alertController = UIAlertController(
                     title: "Error",
                     message: error.localizedDescription,
-                    preferredStyle: .Alert)
+                    preferredStyle: .alert)
                 alertController.addAction(UIAlertAction(
                     title: "OK",
-                    style: .Default,
+                    style: .default,
                     handler: nil))
-                self.presentViewController(alertController, animated: true, completion: nil)
+                self.present(alertController, animated: true, completion: nil)
         }
     }
     
