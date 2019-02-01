@@ -5,9 +5,6 @@
       location = "group:Weather.xcodeproj">
    </FileRef>
    <FileRef
-      location = "group:Weather.playground">
-   </FileRef>
-   <FileRef
       location = "group:Pods/Pods.xcodeproj">
    </FileRef>
 </Workspace>

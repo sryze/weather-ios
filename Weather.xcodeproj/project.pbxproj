@@ -170,7 +170,6 @@
 				A529257D1C51EDC600CB4365 /* Frameworks */,
 				A529257E1C51EDC600CB4365 /* Resources */,
 				7BA93A87ADEEC541CF31B1A5 /* [CP] Embed Pods Frameworks */,
-				1F8128A0157BE8DDC1F4E987 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -224,20 +223,23 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 0720;
-				LastUpgradeCheck = 0930;
+				LastUpgradeCheck = 1010;
 				ORGANIZATIONNAME = Rhinoda;
 				TargetAttributes = {
 					A529257F1C51EDC600CB4365 = {
 						CreatedOnToolsVersion = 7.2;
 						DevelopmentTeam = R8U89LKRGR;
+						LastSwiftMigration = 1010;
 						ProvisioningStyle = Manual;
 					};
 					A52925931C51EDC600CB4365 = {
 						CreatedOnToolsVersion = 7.2;
+						LastSwiftMigration = 1010;
 						TestTargetID = A529257F1C51EDC600CB4365;
 					};
 					A529259E1C51EDC600CB4365 = {
 						CreatedOnToolsVersion = 7.2;
+						LastSwiftMigration = 1010;
 						TestTargetID = A529257F1C51EDC600CB4365;
 					};
 				};
@@ -306,21 +308,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
-			showEnvVarsInLog = 0;
-		};
-		1F8128A0157BE8DDC1F4E987 /* [CP] Copy Pods Resources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "[CP] Copy Pods Resources";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-Weather/Pods-Weather-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		7BA93A87ADEEC541CF31B1A5 /* [CP] Embed Pods Frameworks */ = {
@@ -530,7 +517,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "015a78e3-db32-448e-a03f-9e47f3f67ca1";
 				PROVISIONING_PROFILE_SPECIFIER = WeatherDistribution;
-				SWIFT_VERSION = 4.0;
+				SWIFT_VERSION = 4.2;
 			};
 			name = Debug;
 		};
@@ -549,7 +536,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "015a78e3-db32-448e-a03f-9e47f3f67ca1";
 				PROVISIONING_PROFILE_SPECIFIER = WeatherDistribution;
-				SWIFT_VERSION = 4.0;
+				SWIFT_VERSION = 4.2;
 			};
 			name = Release;
 		};
@@ -561,7 +548,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.rhinoda.WeatherTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 4.0;
+				SWIFT_VERSION = 4.2;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Weather.app/Weather";
 			};
 			name = Debug;
@@ -574,7 +561,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.rhinoda.WeatherTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 4.0;
+				SWIFT_VERSION = 4.2;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Weather.app/Weather";
 			};
 			name = Release;
@@ -586,7 +573,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.rhinoda.WeatherUITests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 4.0;
+				SWIFT_VERSION = 4.2;
 				TEST_TARGET_NAME = Weather;
 				USES_XCTRUNNER = YES;
 			};
@@ -599,7 +586,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.rhinoda.WeatherUITests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 4.0;
+				SWIFT_VERSION = 4.2;
 				TEST_TARGET_NAME = Weather;
 				USES_XCTRUNNER = YES;
 			};
