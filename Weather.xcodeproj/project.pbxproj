@@ -97,12 +97,12 @@
 		A52925771C51EDC600CB4365 = {
 			isa = PBXGroup;
 			children = (
+				D8D1AFCA7E24374B6D6902B7 /* Frameworks */,
+				8B13A8B4BDAF2ABBD9D8E54A /* Pods */,
 				A52925811C51EDC600CB4365 /* Products */,
 				A52925821C51EDC600CB4365 /* Weather */,
 				A52925971C51EDC600CB4365 /* WeatherTests */,
 				A52925A21C51EDC600CB4365 /* WeatherUITests */,
-				8B13A8B4BDAF2ABBD9D8E54A /* Pods */,
-				D8D1AFCA7E24374B6D6902B7 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
