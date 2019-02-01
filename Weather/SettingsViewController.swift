@@ -3,7 +3,7 @@
 //  Weather
 //
 //  Created by Sergey on 09/02/16.
-//  Copyright © 2016 Rhinoda. All rights reserved.
+//  Copyright © 2016 Sergey Zolotarev. All rights reserved.
 //
 
 import UIKit
