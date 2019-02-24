@@ -12,6 +12,7 @@ import UIKit
 class WeatherViewController: UIViewController, CLLocationManagerDelegate, UITextFieldDelegate {
 
     @IBOutlet weak var placeNameLabel: UILabel!
+    @IBOutlet weak var countryLabel: UILabel!
     @IBOutlet weak var temperatureLabel: UILabel!
     @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
     @IBOutlet weak var locationField: UITextField!
@@ -60,6 +61,7 @@ class WeatherViewController: UIViewController, CLLocationManagerDelegate, UIText
         
         placeNameLabel.text = "Loading..."
         placeNameLabel.alpha = 0.5
+        countryLabel.isHidden = true
         temperatureLabel.alpha = 0
         activityIndicator.startAnimating()
     }
@@ -123,8 +125,10 @@ class WeatherViewController: UIViewController, CLLocationManagerDelegate, UIText
                 if let placemark = placemarks?.last,
                    let city = placemark.locality,
                    let country = placemark.country {
-                    self.placeNameLabel.text =  "\(city), \(country)"
+                    self.placeNameLabel.text =  city
                     self.placeNameLabel.alpha = 1
+                    self.countryLabel.text = country
+                    self.countryLabel.isHidden = false
                 }
             })
         }
@@ -145,18 +149,21 @@ class WeatherViewController: UIViewController, CLLocationManagerDelegate, UIText
         
         placeNameLabel.text = "Loading..."
         placeNameLabel.alpha = 0.5
+        countryLabel.isHidden = true
         temperatureLabel.alpha = 0
         activityIndicator.startAnimating()
         
         geocoder.geocodeAddressString(address, completionHandler: { (placemarks, error) in
             self.placeNameLabel.alpha = 1
             self.placeNameLabel.text = address
+            self.countryLabel.isHidden = false
             
             if let placemark = placemarks?.last,
                let city = placemark.locality,
                let country = placemark.country,
                let location = placemark.location {
-                self.placeNameLabel.text = "\(city), \(country)"
+                self.placeNameLabel.text = city
+                self.countryLabel.text = country
                 self.weatherLocation = .Precise(location.coordinate)
             } else {
                 self.weatherLocation = .Address(address)
