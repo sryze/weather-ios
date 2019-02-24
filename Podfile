@@ -5,5 +5,4 @@ use_frameworks!
 
 target 'Weather' do
     pod 'Alamofire'
-    pod 'IQKeyboardManagerSwift'
 end

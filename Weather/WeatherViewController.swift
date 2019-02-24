@@ -11,7 +11,8 @@ import UIKit
 
 class WeatherViewController: UIViewController, CLLocationManagerDelegate, UITextFieldDelegate {
 
-    @IBOutlet weak var placeNameLabel: UILabel!
+    @IBOutlet weak var scrollView: UIScrollView!
+    @IBOutlet weak var cityLabel: UILabel!
     @IBOutlet weak var countryLabel: UILabel!
     @IBOutlet weak var temperatureLabel: UILabel!
     @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
@@ -39,7 +40,7 @@ class WeatherViewController: UIViewController, CLLocationManagerDelegate, UIText
         updateButton.contentEdgeInsets = UIEdgeInsets(top: 0, left: 8, bottom: 0, right: 8)
         
         if let savedAddress = settings.address {
-            updateLocation(fromAddress: savedAddress)
+            updateLocation(fromAddress: savedAddress, completionHandler: nil)
         }
         
         locationManager.delegate = self
@@ -59,8 +60,8 @@ class WeatherViewController: UIViewController, CLLocationManagerDelegate, UIText
             locationManager.startUpdatingLocation()
         }
         
-        placeNameLabel.text = "Loading..."
-        placeNameLabel.alpha = 0.5
+        cityLabel.text = "Loading..."
+        cityLabel.alpha = 0.5
         countryLabel.isHidden = true
         temperatureLabel.alpha = 0
         activityIndicator.startAnimating()
@@ -70,12 +71,21 @@ class WeatherViewController: UIViewController, CLLocationManagerDelegate, UIText
         super.viewWillAppear(animated)
         
         if let weatherData = weatherData {
-            updateDisplayedWeatherFromData(data: weatherData)
+            updateWeather(data: weatherData)
         }
     }
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
+        
+        NotificationCenter.default.addObserver(self,
+                                               selector: #selector(handleKeyboardWillShow),
+                                               name: UIResponder.keyboardWillShowNotification,
+                                               object: nil)
+        NotificationCenter.default.addObserver(self,
+                                               selector: #selector(handleKeyboardWillHide),
+                                               name: UIResponder.keyboardWillHideNotification,
+                                               object: nil)
         
         if !CLLocationManager.locationServicesEnabled() {
             let alertController = UIAlertController(
@@ -90,13 +100,15 @@ class WeatherViewController: UIViewController, CLLocationManagerDelegate, UIText
         }
     }
     
-    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        view.endEditing(true)
+    override func viewDidDisappear(_ animated: Bool) {
+        NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillShowNotification, object: nil)
+        NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillHideNotification, object: nil)
     }
     
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         if textField == locationField {
             updateLocation()
+            view.endEditing(true)
         }
         return true
     }
@@ -119,14 +131,16 @@ class WeatherViewController: UIViewController, CLLocationManagerDelegate, UIText
             
             weatherLocation = .Precise(location.coordinate)
             print("Fetching weather for \(weatherLocation!)")
-            weatherClient.fetchWeatherForLocation(location: weatherLocation!, handler: finishFetchingWeather)
+            weatherClient.fetchWeatherForLocation(location: weatherLocation!, handler: { result in
+                self.finishFetchingWeather(result: result)
+            })
             
             geocoder.reverseGeocodeLocation(location, completionHandler: { (placemarks, error) in
                 if let placemark = placemarks?.last,
                    let city = placemark.locality,
                    let country = placemark.country {
-                    self.placeNameLabel.text =  city
-                    self.placeNameLabel.alpha = 1
+                    self.cityLabel.text =  city
+                    self.cityLabel.alpha = 1
                     self.countryLabel.text = country
                     self.countryLabel.isHidden = false
                 }
@@ -137,32 +151,46 @@ class WeatherViewController: UIViewController, CLLocationManagerDelegate, UIText
     @objc func performScheduledWeatherUpdate() {
         if let weatherLocation = weatherLocation {
             print("Performing scheduled weather update")
-            weatherClient.fetchWeatherForLocation(location: weatherLocation, handler: finishFetchingWeather)
+            weatherClient.fetchWeatherForLocation(location: weatherLocation, handler: { result in
+                self.finishFetchingWeather(result: result)
+            })
         } else {
             print("Skipping scheduled weather update beacuse location is unknown")
         }
     }
     
-    func updateLocation(fromAddress address: String) {
-        locationField.text = nil
-        locationField.resignFirstResponder()
+    @objc private func handleKeyboardWillShow(notification: Notification) {
+        if let keyboardBounds = notification.userInfo?["UIKeyboardBoundsUserInfoKey"] as? CGRect {
+            let textFieldRectInScrollView = locationField.convert(locationField.bounds, to: scrollView)
+            let textFieldKeyboardOffset =
+                keyboardBounds.height - scrollView.frame.height + textFieldRectInScrollView.maxY + 16
+            scrollView.setContentOffset(CGPoint(x: 0, y: textFieldKeyboardOffset), animated: true)
+        }
+    }
+    
+    @objc private func handleKeyboardWillHide(notification: Notification) {
+        scrollView.setContentOffset(CGPoint(x: 0, y: 0), animated: true)
+    }
+    
+    private func updateLocation(fromAddress address: String, completionHandler: ((_ success: Bool) -> Void)?) {
+        let oldCity = cityLabel.text
         
-        placeNameLabel.text = "Loading..."
-        placeNameLabel.alpha = 0.5
+        locationField.text = nil
+        cityLabel.text = "Loading..."
+        cityLabel.alpha = 0.5
         countryLabel.isHidden = true
         temperatureLabel.alpha = 0
         activityIndicator.startAnimating()
         
         geocoder.geocodeAddressString(address, completionHandler: { (placemarks, error) in
-            self.placeNameLabel.alpha = 1
-            self.placeNameLabel.text = address
+            self.cityLabel.alpha = 1
             self.countryLabel.isHidden = false
             
             if let placemark = placemarks?.last,
                let city = placemark.locality,
                let country = placemark.country,
                let location = placemark.location {
-                self.placeNameLabel.text = city
+                self.cityLabel.text = city
                 self.countryLabel.text = country
                 self.weatherLocation = .Precise(location.coordinate)
             } else {
@@ -170,19 +198,36 @@ class WeatherViewController: UIViewController, CLLocationManagerDelegate, UIText
             }
             
             print("Fetching weather for \(self.weatherLocation!)")
-            self.weatherClient.fetchWeatherForLocation(location: self.weatherLocation!,
-                                                       handler: self.finishFetchingWeather)
+            self.weatherClient.fetchWeatherForLocation(
+                location: self.weatherLocation!, handler: { result in
+                    let success = self.finishFetchingWeather(result: result)
+                    if let handler = completionHandler {
+                        handler(success)
+                    }
+                    if !success {
+                        self.cityLabel.text = oldCity
+                    }
+            })
         })
     }
     
+    @IBAction func handleScrollViewTap(_ sender: Any) {
+        view.endEditing(true)
+    }
+    
     @IBAction func updateLocation() {
+        view.endEditing(true)
+        
         if let address = locationField.text, !address.isEmpty {
-            updateLocation(fromAddress: address)
-            settings.address = address
+            updateLocation(fromAddress: address, completionHandler: { success in
+                if success {
+                    self.settings.address = address
+                }
+            })
         }
     }
     
-    private func finishFetchingWeather(result: WeatherResult) {
+    @discardableResult private func finishFetchingWeather(result: WeatherResult) -> Bool {
         activityIndicator.stopAnimating()
         temperatureLabel.alpha = 1
         
@@ -190,26 +235,28 @@ class WeatherViewController: UIViewController, CLLocationManagerDelegate, UIText
             case .Success(let data):
                 print("Successfully fetched weather data: \(data)")
                 weatherData = data
-                updateDisplayedWeatherFromData(data: data)
+                updateWeather(data: data)
+                return true
             case .Failure(let error):
                 print("Failed to fetch weather data: \(error)")
                 let alertController = UIAlertController(
                     title: "Error",
-                    message: error.localizedDescription,
+                    message: "Sorry, we could not obtain weather information for this city.",
                     preferredStyle: .alert)
                 alertController.addAction(UIAlertAction(
                     title: "OK",
                     style: .default,
                     handler: nil))
                 present(alertController, animated: true, completion: nil)
+                return false
         }
     }
     
-    private func updateDisplayedWeatherFromData(data: WeatherData) {
+    private func updateWeather(data: WeatherData) {
         temperatureLabel.text = {
             switch settings.temperatureScale {
                 case _ where data.temperature == nil:
-                    return ":("
+                    return "Hmm... 🤔"
                 case .Celsius:
                     return String(format: "%+.0f °C", round(data.temperatureInCelsius!))
                 case .Farenheit:
