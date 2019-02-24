@@ -43,14 +43,14 @@ struct WeatherData: CustomStringConvertible {
     let temperature: Double?
     /// Current temperature in to Celsius degrees.
     var temperatureInCelsius: Double? {
-        if let temperature = self.temperature {
+        if let temperature = temperature {
             return temperature - 273.15
         }
         return nil
     }
     /// Current temperature in to Farenheit degrees.
     var temperatureInFarenheit: Double? {
-        if let temperatureInCelsius = self.temperatureInCelsius {
+        if let temperatureInCelsius = temperatureInCelsius {
             return temperatureInCelsius * 1.8  + 32
         }
         return nil
@@ -62,7 +62,7 @@ struct WeatherData: CustomStringConvertible {
     let pressure: Double?
     
     var description: String {
-        return "<WeatherData: temperature=\(String(describing: self.temperature)), humidity=\(String(describing: self.humidity)), pressure=\(String(describing: self.pressure))>"
+        return "<WeatherData: temperature=\(String(describing: temperature)), humidity=\(String(describing: humidity)), pressure=\(String(describing: pressure))>"
     }
 }
 
@@ -97,9 +97,9 @@ class WeatherClient {
     func fetchWeatherForLocation(location: WeatherLocation, handler: @escaping (WeatherResult) -> Void) {
         switch location {
             case .Precise(let coordinate):
-                self.fetchWeatherWithParameters(parameters: ["lat": coordinate.latitude as AnyObject, "lon": coordinate.longitude as AnyObject], handler: handler)
+                fetchWeatherWithParameters(parameters: ["lat": coordinate.latitude as AnyObject, "lon": coordinate.longitude as AnyObject], handler: handler)
             case .Address(let query):
-                self.fetchWeatherWithParameters(parameters: ["q": query as AnyObject], handler: handler)
+                fetchWeatherWithParameters(parameters: ["q": query as AnyObject], handler: handler)
         }
     }
     
@@ -112,7 +112,7 @@ class WeatherClient {
     /// - SeeAlso: `fetchWeatherForLocation(_:handler:)`
     func fetchWeatherWithParameters(parameters: [String: AnyObject], handler: @escaping (WeatherResult) -> Void) {
         var finalParameters = parameters
-        finalParameters["APPID"] = self.APIKey as AnyObject
+        finalParameters["APPID"] = APIKey as AnyObject
         
         Alamofire.request(WeatherClient.APIBaseURL, method: .get, parameters: finalParameters).responseJSON { response in
             switch response.result {

@@ -15,6 +15,7 @@ class WeatherViewController: UIViewController, CLLocationManagerDelegate, UIText
     @IBOutlet weak var temperatureLabel: UILabel!
     @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
     @IBOutlet weak var locationField: UITextField!
+    @IBOutlet weak var updateButton: UIButton!
     
     private let locationManager = CLLocationManager()
     private let weatherClient = WeatherClient(APIKey: "df8126a16e5ad6f20b8185627628b7f5")
@@ -31,13 +32,18 @@ class WeatherViewController: UIViewController, CLLocationManagerDelegate, UIText
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        updateButton.layer.borderColor = #colorLiteral(red: 0.4, green: 0.4, blue: 0.4, alpha: 0.802547089)
+        updateButton.layer.borderWidth = 1
+        updateButton.layer.cornerRadius = 5
+        updateButton.contentEdgeInsets = UIEdgeInsets(top: 0, left: 8, bottom: 0, right: 8)
+        
         if let savedAddress = settings.address {
             updateLocation(fromAddress: savedAddress)
         }
         
-        self.locationManager.delegate = self
-        self.locationManager.requestWhenInUseAuthorization()
-        self.locationManager.requestAlwaysAuthorization()
+        locationManager.delegate = self
+        locationManager.requestWhenInUseAuthorization()
+        locationManager.requestAlwaysAuthorization()
         
         Timer.scheduledTimer(timeInterval: 600,
             target: self,
@@ -46,22 +52,23 @@ class WeatherViewController: UIViewController, CLLocationManagerDelegate, UIText
             repeats: true)
         
         if CLLocationManager.significantLocationChangeMonitoringAvailable() {
-            self.locationManager.startUpdatingLocation()
+            locationManager.startUpdatingLocation()
         } else {
-            self.locationManager.distanceFilter = 10_000
-            self.locationManager.startUpdatingLocation()
+            locationManager.distanceFilter = 10_000
+            locationManager.startUpdatingLocation()
         }
         
-        self.placeNameLabel.isHidden = true
-        self.temperatureLabel.isHidden = true
-        self.activityIndicator.startAnimating()
+        placeNameLabel.text = "Loading..."
+        placeNameLabel.alpha = 0.5
+        temperatureLabel.alpha = 0
+        activityIndicator.startAnimating()
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
-        if let weatherData = self.weatherData {
-            self.updateDisplayedWeatherFromData(data: weatherData)
+        if let weatherData = weatherData {
+            updateDisplayedWeatherFromData(data: weatherData)
         }
     }
     
@@ -77,17 +84,17 @@ class WeatherViewController: UIViewController, CLLocationManagerDelegate, UIText
                 title: "OK",
                 style: .default,
                 handler: nil))
-            self.present(alertController, animated: true, completion: nil)
+            present(alertController, animated: true, completion: nil)
         }
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        self.view.endEditing(true)
+        view.endEditing(true)
     }
     
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-        if textField == self.locationField {
-            self.updateLocation()
+        if textField == locationField {
+            updateLocation()
         }
         return true
     }
@@ -102,52 +109,53 @@ class WeatherViewController: UIViewController, CLLocationManagerDelegate, UIText
             
             // Stop high-precision location updates after obtaining the initial location. Subsequent
             // updates will come from significant location changes.
-            if !self.receivedInitialLocation {
-                self.locationManager.stopUpdatingLocation()
-                self.locationManager.startMonitoringSignificantLocationChanges()
-                self.receivedInitialLocation = true
+            if !receivedInitialLocation {
+                locationManager.stopUpdatingLocation()
+                locationManager.startMonitoringSignificantLocationChanges()
+                receivedInitialLocation = true
             }
-            self.weatherLocation = .Precise(location.coordinate)
             
-            print("Fetching weather for \(self.weatherLocation!)")
-            self.weatherClient.fetchWeatherForLocation(location: self.weatherLocation!, handler: self.finishFetchingWeather)
+            weatherLocation = .Precise(location.coordinate)
+            print("Fetching weather for \(weatherLocation!)")
+            weatherClient.fetchWeatherForLocation(location: weatherLocation!, handler: finishFetchingWeather)
             
-            self.geocoder.reverseGeocodeLocation(location, completionHandler: { (placemarks, error) in
+            geocoder.reverseGeocodeLocation(location, completionHandler: { (placemarks, error) in
                 if let placemark = placemarks?.last,
                    let city = placemark.locality,
                    let country = placemark.country {
                     self.placeNameLabel.text =  "\(city), \(country)"
-                    self.placeNameLabel.isHidden = false
+                    self.placeNameLabel.alpha = 1
                 }
             })
         }
     }
     
     @objc func performScheduledWeatherUpdate() {
-        if let weatherLocation = self.weatherLocation {
+        if let weatherLocation = weatherLocation {
             print("Performing scheduled weather update")
-            self.weatherClient.fetchWeatherForLocation(location: weatherLocation, handler: self.finishFetchingWeather)
+            weatherClient.fetchWeatherForLocation(location: weatherLocation, handler: finishFetchingWeather)
         } else {
             print("Skipping scheduled weather update beacuse location is unknown")
         }
     }
     
     func updateLocation(fromAddress address: String) {
-        self.locationField.text = nil
-        self.locationField.resignFirstResponder()
+        locationField.text = nil
+        locationField.resignFirstResponder()
         
-        self.placeNameLabel.isHidden = true
-        self.temperatureLabel.isHidden = true
-        self.activityIndicator.startAnimating()
+        placeNameLabel.text = "Loading..."
+        placeNameLabel.alpha = 0.5
+        temperatureLabel.alpha = 0
+        activityIndicator.startAnimating()
         
         geocoder.geocodeAddressString(address, completionHandler: { (placemarks, error) in
-            self.placeNameLabel.isHidden = false
+            self.placeNameLabel.alpha = 1
             self.placeNameLabel.text = address
             
             if let placemark = placemarks?.last,
-                let city = placemark.locality,
-                let country = placemark.country,
-                let location = placemark.location {
+               let city = placemark.locality,
+               let country = placemark.country,
+               let location = placemark.location {
                 self.placeNameLabel.text = "\(city), \(country)"
                 self.weatherLocation = .Precise(location.coordinate)
             } else {
@@ -155,26 +163,27 @@ class WeatherViewController: UIViewController, CLLocationManagerDelegate, UIText
             }
             
             print("Fetching weather for \(self.weatherLocation!)")
-            self.weatherClient.fetchWeatherForLocation(location: self.weatherLocation!, handler: self.finishFetchingWeather)
+            self.weatherClient.fetchWeatherForLocation(location: self.weatherLocation!,
+                                                       handler: self.finishFetchingWeather)
         })
     }
     
     @IBAction func updateLocation() {
-        if let address = self.locationField.text, !address.isEmpty {
+        if let address = locationField.text, !address.isEmpty {
             updateLocation(fromAddress: address)
             settings.address = address
         }
     }
     
     private func finishFetchingWeather(result: WeatherResult) {
-        self.activityIndicator.stopAnimating()
-        self.temperatureLabel.isHidden = false
+        activityIndicator.stopAnimating()
+        temperatureLabel.alpha = 1
         
         switch result {
             case .Success(let data):
                 print("Successfully fetched weather data: \(data)")
-                self.weatherData = data
-                self.updateDisplayedWeatherFromData(data: data)
+                weatherData = data
+                updateDisplayedWeatherFromData(data: data)
             case .Failure(let error):
                 print("Failed to fetch weather data: \(error)")
                 let alertController = UIAlertController(
@@ -185,12 +194,12 @@ class WeatherViewController: UIViewController, CLLocationManagerDelegate, UIText
                     title: "OK",
                     style: .default,
                     handler: nil))
-                self.present(alertController, animated: true, completion: nil)
+                present(alertController, animated: true, completion: nil)
         }
     }
     
     private func updateDisplayedWeatherFromData(data: WeatherData) {
-        self.temperatureLabel.text = {
+        temperatureLabel.text = {
             switch settings.temperatureScale {
                 case _ where data.temperature == nil:
                     return ":("
