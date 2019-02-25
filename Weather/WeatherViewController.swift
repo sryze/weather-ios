@@ -14,6 +14,7 @@ class WeatherViewController: UIViewController, CLLocationManagerDelegate, UIText
     @IBOutlet weak var scrollView: UIScrollView!
     @IBOutlet weak var cityButton: UIButton!
     @IBOutlet weak var loadingLabel: UILabel!
+    @IBOutlet weak var chooseLabel: UILabel!
     @IBOutlet weak var countryLabel: UILabel!
     @IBOutlet weak var temperatureLabel: UILabel!
     @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
@@ -27,7 +28,7 @@ class WeatherViewController: UIViewController, CLLocationManagerDelegate, UIText
     private var city: String?
     private var country: String?
     private var receivedInitialLocation = false
-    private var weatherLocation: WeatherLocation?
+    private var location: CLLocation?
     private var weatherData: WeatherData?
     
     private var settings: Settings = {
@@ -42,13 +43,17 @@ class WeatherViewController: UIViewController, CLLocationManagerDelegate, UIText
         updateButton.layer.cornerRadius = 5
         updateButton.contentEdgeInsets = UIEdgeInsets(top: 0, left: 8, bottom: 0, right: 8)
         
-        if let savedAddress = settings.address {
-            updateLocation(fromAddress: savedAddress, completionHandler: nil)
-        }
-        
         locationManager.delegate = self
-        locationManager.requestWhenInUseAuthorization()
-        locationManager.requestAlwaysAuthorization()
+        switch CLLocationManager.authorizationStatus() {
+            case .authorizedWhenInUse:
+                startLocationMonitoring()
+                break
+            case .notDetermined:
+                locationManager.requestWhenInUseAuthorization()
+                break
+            default:
+                break
+        }
         
         Timer.scheduledTimer(timeInterval: 600,
             target: self,
@@ -56,18 +61,15 @@ class WeatherViewController: UIViewController, CLLocationManagerDelegate, UIText
             userInfo: nil,
             repeats: true)
         
-        if CLLocationManager.significantLocationChangeMonitoringAvailable() {
-            locationManager.startUpdatingLocation()
+        if let savedAddress = settings.address {
+            updateLocation(fromAddress: savedAddress, completionHandler: nil)
         } else {
-            locationManager.distanceFilter = 10_000
-            locationManager.startUpdatingLocation()
+            cityButton.isHidden = true
+            countryLabel.isHidden = true
+            loadingLabel.isHidden = true
+            chooseLabel.isHidden = false
+            temperatureLabel.text = "N/A"
         }
-        
-        cityButton.isHidden = true
-        countryLabel.isHidden = true
-        temperatureLabel.alpha = 0
-        loadingLabel.isHidden = false
-        activityIndicator.startAnimating()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -116,47 +118,67 @@ class WeatherViewController: UIViewController, CLLocationManagerDelegate, UIText
         return true
     }
     
+    func locationManager(_ locationManager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
+        switch status {
+            case .authorizedAlways, .authorizedWhenInUse:
+                startLocationMonitoring()
+                break
+            case .restricted, .denied:
+                break
+            default:
+                break
+        }
+    }
+    
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
         print("Location manager failed with error: \(error)")
     }
     
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-        if let location = locations.last {
-            print("Obtained device location: \(location)")
-            
-            // Stop high-precision location updates after obtaining the initial location. Subsequent
-            // updates will come from significant location changes.
-            if !receivedInitialLocation {
-                locationManager.stopUpdatingLocation()
-                locationManager.startMonitoringSignificantLocationChanges()
-                receivedInitialLocation = true
-            }
-            
-            weatherLocation = .Precise(location.coordinate)
-            print("Fetching weather for \(weatherLocation!)")
-            weatherClient.fetchWeather(forLocation: weatherLocation!, handler: { result in
-                self.finishFetchingWeather(result: result)
-            })
-            
-            geocoder.reverseGeocodeLocation(location, completionHandler: { (placemarks, error) in
-                if let placemark = placemarks?.last,
-                   let city = placemark.locality,
-                   let country = placemark.country {
-                    self.cityButton.setTitle(city, for: .normal)
-                    self.cityButton.isHidden = false
-                    self.countryLabel.text = country
-                    self.countryLabel.isHidden = false
-                    self.loadingLabel.isHidden = true
-                    self.activityIndicator.stopAnimating()
-                }
-            })
+        guard let location = locations.last else {
+            return
         }
+        
+        print("Obtained device location: \(location)")
+        
+        cityButton.isHidden = true
+        countryLabel.isHidden = true
+        temperatureLabel.alpha = 0
+        loadingLabel.isHidden = false
+        chooseLabel.isHidden = true
+        activityIndicator.startAnimating()
+        
+        // Stop high-precision location updates after obtaining the initial location. Subsequent
+        // updates will come from significant location changes.
+        if !receivedInitialLocation {
+            locationManager.stopUpdatingLocation()
+            locationManager.startMonitoringSignificantLocationChanges()
+            receivedInitialLocation = true
+        }
+        
+        weatherClient.fetchWeather(forLocation: WeatherLocation.Precise(location.coordinate), handler: { result in
+            self.finishFetchingWeather(result: result)
+        })
+        
+        geocoder.reverseGeocodeLocation(location, completionHandler: { (placemarks, error) in
+            if let placemark = placemarks?.last,
+               let city = placemark.locality,
+               let country = placemark.country {
+                self.cityButton.setTitle(city, for: .normal)
+                self.cityButton.isHidden = false
+                self.countryLabel.text = country
+                self.countryLabel.isHidden = false
+                self.loadingLabel.isHidden = true
+                self.activityIndicator.stopAnimating()
+            }
+        })
     }
     
     @objc func performScheduledWeatherUpdate() {
-        if let weatherLocation = weatherLocation {
-            print("Performing scheduled weather update")
-            weatherClient.fetchWeather(forLocation: weatherLocation, handler: { result in
+        print("Performing scheduled weather update")
+        
+        if let location = location {
+            weatherClient.fetchWeather(forLocation: .Precise(location.coordinate), handler: { result in
                 self.finishFetchingWeather(result: result)
             })
         } else {
@@ -177,12 +199,24 @@ class WeatherViewController: UIViewController, CLLocationManagerDelegate, UIText
         scrollView.setContentOffset(CGPoint(x: 0, y: 0), animated: true)
     }
     
+    private func startLocationMonitoring() {
+        if CLLocationManager.significantLocationChangeMonitoringAvailable() {
+            locationManager.startUpdatingLocation()
+        } else {
+            locationManager.distanceFilter = 10_000
+            locationManager.startUpdatingLocation()
+        }
+    }
+    
     private func updateLocation(fromAddress address: String, completionHandler: ((_ success: Bool) -> Void)?) {
+        print("Attempting to change location to \"\(address)\"")
+        
         locationField.text = nil
         cityButton.isHidden = true
         countryLabel.isHidden = true
         temperatureLabel.alpha = 0
         loadingLabel.isHidden = false
+        chooseLabel.isHidden = true
         activityIndicator.startAnimating()
         
         let failureHandler = {
@@ -219,18 +253,20 @@ class WeatherViewController: UIViewController, CLLocationManagerDelegate, UIText
                 return
             }
             
+            print("Geocoded location: \(city, country, location)")
             self.city = city
             self.country = country
+            self.location = location
             self.cityButton.setTitle(city, for: .normal)
             self.cityButton.isHidden = false
             self.countryLabel.text = country
             self.countryLabel.isHidden = false
             self.loadingLabel.isHidden = true
             
-            self.weatherLocation = .Precise(location.coordinate)
-            print("Fetching weather for \(self.weatherLocation!)")
+            let weatherLocation = WeatherLocation.Precise(location.coordinate)
+            print("Fetching weather for \(weatherLocation)")
 
-            self.weatherClient.fetchWeather(forLocation: self.weatherLocation!, handler: { result in
+            self.weatherClient.fetchWeather(forLocation: weatherLocation, handler: { result in
                 let success = self.finishFetchingWeather(result: result)
                 completionHandler?(success)
             })
