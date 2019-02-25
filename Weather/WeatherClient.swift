@@ -94,12 +94,15 @@ class WeatherClient {
     /// - Parameter handler: A callback invoked when the request is complete.
     ///
     /// - SeeAlso: `fetchWeather(_:handler:)`
-    func fetchWeatherForLocation(location: WeatherLocation, handler: @escaping (WeatherResult) -> Void) {
+    func fetchWeather(forLocation location: WeatherLocation, handler: @escaping (WeatherResult) -> Void) {
         switch location {
             case .Precise(let coordinate):
-                fetchWeatherWithParameters(parameters: ["lat": coordinate.latitude as AnyObject, "lon": coordinate.longitude as AnyObject], handler: handler)
+                fetchWeather(withParameters: [
+                    "lat": coordinate.latitude as AnyObject,
+                    "lon": coordinate.longitude as AnyObject
+                ], handler: handler)
             case .Address(let query):
-                fetchWeatherWithParameters(parameters: ["q": query as AnyObject], handler: handler)
+                fetchWeather(withParameters: ["q": query as AnyObject], handler: handler)
         }
     }
     
@@ -110,7 +113,7 @@ class WeatherClient {
     /// - Parameter handler: A callback invoked when the request is complete.
     ///
     /// - SeeAlso: `fetchWeatherForLocation(_:handler:)`
-    func fetchWeatherWithParameters(parameters: [String: AnyObject], handler: @escaping (WeatherResult) -> Void) {
+    func fetchWeather(withParameters parameters: [String: AnyObject], handler: @escaping (WeatherResult) -> Void) {
         var finalParameters = parameters
         finalParameters["APPID"] = APIKey as AnyObject
         

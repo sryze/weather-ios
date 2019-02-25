@@ -12,7 +12,8 @@ import UIKit
 class WeatherViewController: UIViewController, CLLocationManagerDelegate, UITextFieldDelegate {
 
     @IBOutlet weak var scrollView: UIScrollView!
-    @IBOutlet weak var cityLabel: UILabel!
+    @IBOutlet weak var cityButton: UIButton!
+    @IBOutlet weak var loadingLabel: UILabel!
     @IBOutlet weak var countryLabel: UILabel!
     @IBOutlet weak var temperatureLabel: UILabel!
     @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
@@ -23,6 +24,8 @@ class WeatherViewController: UIViewController, CLLocationManagerDelegate, UIText
     private let weatherClient = WeatherClient(APIKey: "df8126a16e5ad6f20b8185627628b7f5")
     private let geocoder = CLGeocoder()
     
+    private var city: String?
+    private var country: String?
     private var receivedInitialLocation = false
     private var weatherLocation: WeatherLocation?
     private var weatherData: WeatherData?
@@ -60,10 +63,10 @@ class WeatherViewController: UIViewController, CLLocationManagerDelegate, UIText
             locationManager.startUpdatingLocation()
         }
         
-        cityLabel.text = "Loading..."
-        cityLabel.alpha = 0.5
+        cityButton.isHidden = true
         countryLabel.isHidden = true
         temperatureLabel.alpha = 0
+        loadingLabel.isHidden = false
         activityIndicator.startAnimating()
     }
     
@@ -131,7 +134,7 @@ class WeatherViewController: UIViewController, CLLocationManagerDelegate, UIText
             
             weatherLocation = .Precise(location.coordinate)
             print("Fetching weather for \(weatherLocation!)")
-            weatherClient.fetchWeatherForLocation(location: weatherLocation!, handler: { result in
+            weatherClient.fetchWeather(forLocation: weatherLocation!, handler: { result in
                 self.finishFetchingWeather(result: result)
             })
             
@@ -139,10 +142,12 @@ class WeatherViewController: UIViewController, CLLocationManagerDelegate, UIText
                 if let placemark = placemarks?.last,
                    let city = placemark.locality,
                    let country = placemark.country {
-                    self.cityLabel.text =  city
-                    self.cityLabel.alpha = 1
+                    self.cityButton.setTitle(city, for: .normal)
+                    self.cityButton.isHidden = false
                     self.countryLabel.text = country
                     self.countryLabel.isHidden = false
+                    self.loadingLabel.isHidden = true
+                    self.activityIndicator.stopAnimating()
                 }
             })
         }
@@ -151,7 +156,7 @@ class WeatherViewController: UIViewController, CLLocationManagerDelegate, UIText
     @objc func performScheduledWeatherUpdate() {
         if let weatherLocation = weatherLocation {
             print("Performing scheduled weather update")
-            weatherClient.fetchWeatherForLocation(location: weatherLocation, handler: { result in
+            weatherClient.fetchWeather(forLocation: weatherLocation, handler: { result in
                 self.finishFetchingWeather(result: result)
             })
         } else {
@@ -173,46 +178,70 @@ class WeatherViewController: UIViewController, CLLocationManagerDelegate, UIText
     }
     
     private func updateLocation(fromAddress address: String, completionHandler: ((_ success: Bool) -> Void)?) {
-        let oldCity = cityLabel.text
-        
         locationField.text = nil
-        cityLabel.text = "Loading..."
-        cityLabel.alpha = 0.5
+        cityButton.isHidden = true
         countryLabel.isHidden = true
         temperatureLabel.alpha = 0
+        loadingLabel.isHidden = false
         activityIndicator.startAnimating()
         
-        geocoder.geocodeAddressString(address, completionHandler: { (placemarks, error) in
-            self.cityLabel.alpha = 1
+        let failureHandler = {
+            self.cityButton.isHidden = false
             self.countryLabel.isHidden = false
+            self.loadingLabel.isHidden = true
+            self.temperatureLabel.alpha = 1
+            self.activityIndicator.stopAnimating()
             
-            if let placemark = placemarks?.last,
-               let city = placemark.locality,
-               let country = placemark.country,
-               let location = placemark.location {
-                self.cityLabel.text = city
-                self.countryLabel.text = country
-                self.weatherLocation = .Precise(location.coordinate)
-            } else {
-                self.weatherLocation = .Address(address)
+            let alertController = UIAlertController(
+                title: "Error",
+                message: "Sorry, we could not find a place named \"\(address)\".",
+                preferredStyle: .alert)
+            alertController.addAction(UIAlertAction(
+                title: "OK",
+                style: .default,
+                handler: nil))
+            self.present(alertController, animated: true, completion: nil)
+            
+            completionHandler?(false)
+        }
+        
+        geocoder.geocodeAddressString(address, completionHandler: { (placemarks, error) in
+            if error != nil {
+                failureHandler()
+                return
             }
             
+            guard let placemark = placemarks?.last,
+                  let city = placemark.locality,
+                  let country = placemark.country,
+                  let location = placemark.location else {
+                failureHandler()
+                return
+            }
+            
+            self.city = city
+            self.country = country
+            self.cityButton.setTitle(city, for: .normal)
+            self.cityButton.isHidden = false
+            self.countryLabel.text = country
+            self.countryLabel.isHidden = false
+            self.loadingLabel.isHidden = true
+            
+            self.weatherLocation = .Precise(location.coordinate)
             print("Fetching weather for \(self.weatherLocation!)")
-            self.weatherClient.fetchWeatherForLocation(
-                location: self.weatherLocation!, handler: { result in
-                    let success = self.finishFetchingWeather(result: result)
-                    if let handler = completionHandler {
-                        handler(success)
-                    }
-                    if !success {
-                        self.cityLabel.text = oldCity
-                    }
+
+            self.weatherClient.fetchWeather(forLocation: self.weatherLocation!, handler: { result in
+                let success = self.finishFetchingWeather(result: result)
+                completionHandler?(success)
             })
         })
     }
     
     @IBAction func handleScrollViewTap(_ sender: Any) {
         view.endEditing(true)
+    }
+    
+    @IBAction func showCity(_ sender: Any) {
     }
     
     @IBAction func updateLocation() {
