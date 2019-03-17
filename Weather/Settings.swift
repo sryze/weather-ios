@@ -14,9 +14,9 @@ class Settings {
         case Celsius
         case Farenheit
     }
-    
+
     let userDefaults: UserDefaults
-    
+
     var defaultTemperatureScale: TemperatureScale {
         if let localization = Bundle.main.preferredLocalizations.first {
             switch (localization) {
@@ -28,7 +28,7 @@ class Settings {
         }
         return TemperatureScale.Celsius
     }
-    
+
     var temperatureScale: TemperatureScale {
         get {
             let scale = self.userDefaults.string(forKey: "TemperatureScale") ?? self.defaultTemperatureScale.rawValue
@@ -38,7 +38,7 @@ class Settings {
             self.userDefaults.setValue(newValue.rawValue, forKey: "TemperatureScale")
         }
     }
-    
+
     var address: String? {
         get {
             return self.userDefaults.string(forKey: "Address")
@@ -47,11 +47,11 @@ class Settings {
             self.userDefaults.setValue(newValue, forKey: "Address")
         }
     }
-    
+
     init(userDefaults: UserDefaults) {
         self.userDefaults = userDefaults
     }
-    
+
     convenience init() {
         self.init(userDefaults: UserDefaults.standard)
     }

@@ -41,7 +41,7 @@
                                                         </state>
                                                         <connections>
                                                             <action selector="showCity:" destination="BYZ-38-t0r" eventType="touchUpInside" id="w8R-GR-o1e"/>
-                                                            <segue destination="EBN-Mu-3Dr" kind="show" identifier="showCity" id="Pg8-Q8-50g"/>
+                                                            <segue destination="TJt-1R-8fv" kind="show" identifier="showCity2" id="AlT-rP-hJh"/>
                                                         </connections>
                                                     </button>
                                                     <label hidden="YES" opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Loading..." textAlignment="center" lineBreakMode="wordWrap" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="cGB-6p-fYp">
@@ -304,7 +304,49 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Y0n-5c-qd2" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1304.8" y="1176.1619190404799"/>
+            <point key="canvasLocation" x="1305" y="1209"/>
+        </scene>
+        <!--Delegate-->
+        <scene sceneID="naM-r2-Mj8">
+            <objects>
+                <viewController title="Map" id="TJt-1R-8fv" customClass="CityViewController2" customModule="Weather" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="UYF-Q3-HfT"/>
+                        <viewControllerLayoutGuide type="bottom" id="LcX-8L-gte"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="pHD-dg-1UV">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="efI-DF-DXq" customClass="MGLMapView">
+                                <rect key="frame" x="16" y="20" width="343" height="647"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <userDefinedRuntimeAttributes>
+                                    <userDefinedRuntimeAttribute type="string" keyPath="styleURL__" value="mapbox://styles/mapbox/light-v9"/>
+                                    <userDefinedRuntimeAttribute type="number" keyPath="zoomLevel">
+                                        <real key="value" value="7"/>
+                                    </userDefinedRuntimeAttribute>
+                                </userDefinedRuntimeAttributes>
+                                <connections>
+                                    <outlet property="delegate" destination="TJt-1R-8fv" id="cLd-Fr-Ydn"/>
+                                </connections>
+                            </view>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <constraints>
+                            <constraint firstItem="efI-DF-DXq" firstAttribute="leading" secondItem="pHD-dg-1UV" secondAttribute="leading" id="2RX-75-nFz"/>
+                            <constraint firstAttribute="bottom" secondItem="efI-DF-DXq" secondAttribute="bottom" id="7hr-sJ-8IL"/>
+                            <constraint firstAttribute="trailing" secondItem="efI-DF-DXq" secondAttribute="trailing" id="cCJ-AL-Ljv"/>
+                            <constraint firstItem="efI-DF-DXq" firstAttribute="top" secondItem="pHD-dg-1UV" secondAttribute="top" id="qXc-yC-8XF"/>
+                        </constraints>
+                    </view>
+                    <connections>
+                        <outlet property="mapView" destination="efI-DF-DXq" id="jCl-lo-ZaN"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="S5t-yY-804" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="2006" y="1209"/>
         </scene>
     </scenes>
     <resources>

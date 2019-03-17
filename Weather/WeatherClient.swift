@@ -27,7 +27,7 @@ enum WeatherLocation: CustomStringConvertible {
     case Precise(CLLocationCoordinate2D)
     /// Location with an address of place name, e.g. New York.
     case Address(String)
-    
+
     var description: String {
         switch self {
             case .Precise(let coordinate):
@@ -55,12 +55,12 @@ struct WeatherData: CustomStringConvertible {
         }
         return nil
     }
-    
+
     /// Current humidity (unused).
     let humidity: Double?
     /// Current pressure (unused).
     let pressure: Double?
-    
+
     var description: String {
         return "<WeatherData: temperature=\(String(describing: temperature)), humidity=\(String(describing: humidity)), pressure=\(String(describing: pressure))>"
     }
@@ -69,7 +69,7 @@ struct WeatherData: CustomStringConvertible {
 class WeatherClient {
     /// The base URL for the OpenWeatherMap API.
     private static let APIBaseURL = "http://api.openweathermap.org/data/2.5/weather"
-    
+
     /// Represents a response from the OpenWeatherMap API.
     enum Result {
         /// Data response, contains weather data such as temperature, etc.
@@ -77,17 +77,17 @@ class WeatherClient {
         /// Error response, contains API error code and message.
         case Failure(String, String)
     }
-    
+
     /// The API key (also known as APPID).
     private let APIKey: String;
-    
+
     /// Initializes the WeatherClient with a given API key (APPID).
     ///
     /// - Parameter APIKey: The API key (APPID) to be used for OpenWeatherMap API requests.
     init(APIKey: String) {
         self.APIKey = APIKey
     }
-    
+
     /// Fetches current weather data at the specified location.
     ///
     /// - Parameter location: The location for which to get weather.
@@ -105,7 +105,7 @@ class WeatherClient {
                 fetchWeather(withParameters: ["q": query as AnyObject], handler: handler)
         }
     }
-    
+
     /// A generic method for fetching current weather data with arbitrary query parameters.
     ///
     /// - Parameter parameters: The request parameters. See [OpenWeatherMap API documentation](http://openweathermap.org/current)
@@ -116,7 +116,7 @@ class WeatherClient {
     func fetchWeather(withParameters parameters: [String: AnyObject], handler: @escaping (WeatherResult) -> Void) {
         var finalParameters = parameters
         finalParameters["APPID"] = APIKey as AnyObject
-        
+
         Alamofire.request(WeatherClient.APIBaseURL, method: .get, parameters: finalParameters).responseJSON { response in
             switch response.result {
                 case .success(let value):
@@ -134,7 +134,7 @@ class WeatherClient {
             }
         }
     }
-    
+
     private static func resultFromResponse(rawData: [String: AnyObject]) -> Result {
         if let errorCode = rawData["cod"], let errorMessage = rawData["message"] {
             return Result.Failure(String(describing: errorCode), String(describing: errorMessage))

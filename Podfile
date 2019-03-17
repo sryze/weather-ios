@@ -5,4 +5,5 @@ use_frameworks!
 
 target 'Weather' do
     pod 'Alamofire'
+    pod 'Mapbox-iOS-SDK'
 end
