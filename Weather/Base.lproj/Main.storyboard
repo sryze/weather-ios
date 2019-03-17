@@ -41,7 +41,7 @@
                                                         </state>
                                                         <connections>
                                                             <action selector="showCity:" destination="BYZ-38-t0r" eventType="touchUpInside" id="w8R-GR-o1e"/>
-                                                            <segue destination="TJt-1R-8fv" kind="show" identifier="showCity2" id="AlT-rP-hJh"/>
+                                                            <segue destination="TJt-1R-8fv" kind="show" identifier="showCity2" id="F0V-tJ-t3N"/>
                                                         </connections>
                                                     </button>
                                                     <label hidden="YES" opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Loading..." textAlignment="center" lineBreakMode="wordWrap" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="cGB-6p-fYp">
@@ -304,7 +304,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Y0n-5c-qd2" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1305" y="1209"/>
+            <point key="canvasLocation" x="958" y="1208"/>
         </scene>
         <!--Delegate-->
         <scene sceneID="naM-r2-Mj8">
@@ -319,12 +319,12 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="efI-DF-DXq" customClass="MGLMapView">
-                                <rect key="frame" x="16" y="20" width="343" height="647"/>
+                                <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <userDefinedRuntimeAttributes>
                                     <userDefinedRuntimeAttribute type="string" keyPath="styleURL__" value="mapbox://styles/mapbox/light-v9"/>
                                     <userDefinedRuntimeAttribute type="number" keyPath="zoomLevel">
-                                        <real key="value" value="7"/>
+                                        <real key="value" value="8"/>
                                     </userDefinedRuntimeAttribute>
                                 </userDefinedRuntimeAttributes>
                                 <connections>
@@ -346,7 +346,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="S5t-yY-804" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2006" y="1209"/>
+            <point key="canvasLocation" x="1650" y="1208"/>
         </scene>
     </scenes>
     <resources>

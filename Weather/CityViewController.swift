@@ -23,7 +23,7 @@ class CityViewController: UIViewController {
         if let location = location {
             mapView.centerCoordinate = location.coordinate
             mapView.region = MKCoordinateRegion(
-                center: location.coordinate, latitudinalMeters: 10000, longitudinalMeters: 10000)
+                center: location.coordinate, latitudinalMeters: 100000, longitudinalMeters: 100000)
 
             let cityAnnotation = MKPointAnnotation()
             cityAnnotation.coordinate = location.coordinate
