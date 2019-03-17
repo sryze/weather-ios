@@ -21,12 +21,6 @@ class CityViewController2: UIViewController, MGLMapViewDelegate {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
 
-        if let city = city {
-            title = city
-        } else {
-            title = "Map"
-        }
-
         if let location = location {
             let cityAnnotation = MGLPointAnnotation()
             cityAnnotation.coordinate = location.coordinate

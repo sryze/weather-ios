@@ -18,12 +18,8 @@ class CityViewController: UIViewController {
     var location: CLLocation?
 
     override func viewWillAppear(_ animated: Bool) {
-        if let city = city {
-            title = city
-        } else {
-            title = "Map"
-        }
-
+        super.viewWillAppear(animated)
+        
         if let location = location {
             mapView.centerCoordinate = location.coordinate
             mapView.region = MKCoordinateRegion(
