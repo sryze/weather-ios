@@ -110,6 +110,15 @@ class WeatherViewController: UIViewController, CLLocationManagerDelegate, UIText
         NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillHideNotification, object: nil)
     }
     
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == "showCity" {
+            let viewController = segue.destination as! CityViewController
+            viewController.location = location
+            viewController.city = city
+            viewController.country = country
+        }
+    }
+    
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         if textField == locationField {
             updateLocation()

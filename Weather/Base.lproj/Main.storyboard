@@ -41,7 +41,7 @@
                                                         </state>
                                                         <connections>
                                                             <action selector="showCity:" destination="BYZ-38-t0r" eventType="touchUpInside" id="w8R-GR-o1e"/>
-                                                            <segue destination="EBN-Mu-3Dr" kind="showDetail" id="Pg8-Q8-50g"/>
+                                                            <segue destination="EBN-Mu-3Dr" kind="show" identifier="showCity" id="Pg8-Q8-50g"/>
                                                         </connections>
                                                     </button>
                                                     <label hidden="YES" opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Loading..." textAlignment="center" lineBreakMode="wordWrap" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="cGB-6p-fYp">
@@ -279,10 +279,10 @@
             </objects>
             <point key="canvasLocation" x="609" y="435"/>
         </scene>
-        <!--City-->
+        <!--Map-->
         <scene sceneID="szg-JZ-hMt">
             <objects>
-                <viewController title="City" id="EBN-Mu-3Dr" customClass="CityViewController" customModule="Weather" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController title="Map" id="EBN-Mu-3Dr" customClass="CityViewController" customModule="Weather" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="o0q-Ub-Zmf"/>
                         <viewControllerLayoutGuide type="bottom" id="5zq-XP-0xt"/>
