@@ -6,20 +6,20 @@
 //  Copyright © 2016 Sergey Zolotarev. All rights reserved.
 //
 
-import Alamofire
 import CoreLocation
 
 let WeatherErrorDomain = "WeatherErrorDomain"
 
 enum WeatherError: Int {
     case APIFailure
+    case URLParameterEncodingError
 }
 
 enum WeatherResult {
     /// Weather request succeeded.
     case Success(data: WeatherData)
     /// Weather request resulted in a nerror.
-    case Failure(NSError)
+    case Failure(Error)
 }
 
 enum WeatherLocation: CustomStringConvertible {
@@ -98,11 +98,11 @@ class WeatherClient {
         switch location {
             case .Precise(let coordinate):
                 fetchWeather(withParameters: [
-                    "lat": coordinate.latitude as AnyObject,
-                    "lon": coordinate.longitude as AnyObject
+                    "lat": "\(coordinate.latitude)",
+                    "lon": "\(coordinate.longitude)"
                 ], handler: handler)
             case .Address(let query):
-                fetchWeather(withParameters: ["q": query as AnyObject], handler: handler)
+                fetchWeather(withParameters: ["q": query], handler: handler)
         }
     }
 
@@ -113,30 +113,52 @@ class WeatherClient {
     /// - Parameter handler: A callback invoked when the request is complete.
     ///
     /// - SeeAlso: `fetchWeatherForLocation(_:handler:)`
-    func fetchWeather(withParameters parameters: [String: AnyObject], handler: @escaping (WeatherResult) -> Void) {
-        var finalParameters = parameters
-        finalParameters["APPID"] = APIKey as AnyObject
-
-        Alamofire.request(WeatherClient.APIBaseURL, method: .get, parameters: finalParameters).responseJSON { response in
-            switch response.result {
-                case .success(let value):
-                    switch WeatherClient.resultFromResponse(rawData: value as! [String: AnyObject]) {
-                        case .Success(let data):
-                            handler(WeatherResult.Success(data: data))
-                        case .Failure(let code, let message):
-                            let error = NSError(domain: WeatherErrorDomain, code: WeatherError.APIFailure.rawValue, userInfo: [
-                                NSLocalizedDescriptionKey: "API returned error \(code): \(message)"
-                            ])
-                            handler(WeatherResult.Failure(error))
-                    }
-                case .failure(let error):
-                    handler(WeatherResult.Failure(error as NSError))
-            }
+    func fetchWeather(withParameters parameters: [String: String], handler: @escaping (WeatherResult) -> Void) {
+        var queryItems = [
+            URLQueryItem(name: "APPID", value: APIKey)
+        ]
+        parameters.forEach({ (key, value) in
+            queryItems.append(URLQueryItem(name: key, value: value))
+        })
+        
+        var urlComponents = URLComponents(string: WeatherClient.APIBaseURL)!
+        urlComponents.queryItems = queryItems
+        
+        guard let url = urlComponents.url else {
+            let error = NSError(domain: WeatherErrorDomain,
+                                code: WeatherError.URLParameterEncodingError.rawValue,
+                                userInfo: [
+                                    NSLocalizedDescriptionKey: "Could not enocode request parameters"
+                                ])
+            handler(WeatherResult.Failure(error))
+            return
         }
+        
+        URLSession.shared.dataTask(with: url) { (data, response, error) in
+            if let error = error {
+                handler(WeatherResult.Failure(error))
+                return
+            }
+            do {
+                let jsonData = try JSONSerialization.jsonObject(with: data!, options: [])
+                switch WeatherClient.resultFromResponse(rawData: jsonData as! [String: AnyObject]) {
+                    case .Success(let data):
+                        handler(WeatherResult.Success(data: data))
+                    case .Failure(let code, let message):
+                        let error = NSError(domain: WeatherErrorDomain, code: WeatherError.APIFailure.rawValue, userInfo: [
+                            NSLocalizedDescriptionKey: "API returned error \(code): \(message)"
+                        ])
+                        handler(WeatherResult.Failure(error))
+                }
+            } catch let error {
+                handler(WeatherResult.Failure(error))
+            }
+        }.resume()
     }
 
     private static func resultFromResponse(rawData: [String: AnyObject]) -> Result {
-        if let errorCode = rawData["cod"], let errorMessage = rawData["message"] {
+        if let errorCode = rawData["cod"],
+           let errorMessage = rawData["message"] {
             return Result.Failure(String(describing: errorCode), String(describing: errorMessage))
         } else {
             let data = WeatherData(

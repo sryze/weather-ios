@@ -177,7 +177,9 @@ class WeatherViewController: UIViewController, CLLocationManagerDelegate, UIText
         }
 
         weatherClient.fetchWeather(forLocation: WeatherLocation.Precise(location.coordinate), handler: { result in
-            self.finishFetchingWeather(result: result)
+            DispatchQueue.main.async {
+                self.finishFetchingWeather(result: result)
+            }
         })
 
         geocoder.reverseGeocodeLocation(location, completionHandler: { (placemarks, error) in
@@ -199,7 +201,9 @@ class WeatherViewController: UIViewController, CLLocationManagerDelegate, UIText
 
         if let location = location {
             weatherClient.fetchWeather(forLocation: .Precise(location.coordinate), handler: { result in
-                self.finishFetchingWeather(result: result)
+                DispatchQueue.main.async {
+                    self.finishFetchingWeather(result: result)
+                }
             })
         } else {
             print("Skipping scheduled weather update beacuse location is unknown")
@@ -287,8 +291,10 @@ class WeatherViewController: UIViewController, CLLocationManagerDelegate, UIText
             print("Fetching weather for \(weatherLocation)")
 
             self.weatherClient.fetchWeather(forLocation: weatherLocation, handler: { result in
-                let success = self.finishFetchingWeather(result: result)
-                completionHandler?(success)
+                DispatchQueue.main.async {
+                    let success = self.finishFetchingWeather(result: result)
+                    completionHandler?(success)
+                }
             })
         })
     }
