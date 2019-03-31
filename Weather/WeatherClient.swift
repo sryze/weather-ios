@@ -18,7 +18,7 @@ enum WeatherError: Int {
 enum WeatherResult {
     /// Weather request succeeded.
     case Success(data: WeatherData)
-    /// Weather request resulted in a nerror.
+    /// Weather request resulted in an error.
     case Failure(Error)
 }
 
@@ -108,8 +108,9 @@ class WeatherClient {
 
     /// A generic method for fetching current weather data with arbitrary query parameters.
     ///
-    /// - Parameter parameters: The request parameters. See [OpenWeatherMap API documentation](http://openweathermap.org/current)
-    ///                         for possible values.
+    /// - Parameter parameters: The request parameters. See
+    ///                         [OpenWeatherMap API documentation](http://openweathermap.org/current) for possible
+    ///                         values.
     /// - Parameter handler: A callback invoked when the request is complete.
     ///
     /// - SeeAlso: `fetchWeatherForLocation(_:handler:)`
@@ -145,9 +146,11 @@ class WeatherClient {
                     case .Success(let data):
                         handler(WeatherResult.Success(data: data))
                     case .Failure(let code, let message):
-                        let error = NSError(domain: WeatherErrorDomain, code: WeatherError.APIFailure.rawValue, userInfo: [
-                            NSLocalizedDescriptionKey: "API returned error \(code): \(message)"
-                        ])
+                        let error = NSError(domain: WeatherErrorDomain,
+                                            code: WeatherError.APIFailure.rawValue,
+                                            userInfo: [
+                                                NSLocalizedDescriptionKey: "API returned error \(code): \(message)"
+                                            ])
                         handler(WeatherResult.Failure(error))
                 }
             } catch let error {
