@@ -17,7 +17,7 @@ class CityViewController2: UIViewController, MGLMapViewDelegate {
     var city: String?
     var country: String?
     var location: CLLocation?
-
+    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
 

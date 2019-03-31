@@ -22,7 +22,8 @@ class WeatherViewController: UIViewController, CLLocationManagerDelegate, UIText
     @IBOutlet weak var updateButton: UIButton!
 
     private let locationManager = CLLocationManager()
-    private let weatherClient = WeatherClient(APIKey: "df8126a16e5ad6f20b8185627628b7f5")
+    private let weatherClient =
+        WeatherClient(APIKey: PrivateInfo.dictionary["OpenWeatherMapToken"] as! String)
     private let geocoder = CLGeocoder()
 
     private var city: String?
@@ -37,7 +38,7 @@ class WeatherViewController: UIViewController, CLLocationManagerDelegate, UIText
 
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        
         updateButton.layer.borderColor = #colorLiteral(red: 0.4, green: 0.4, blue: 0.4, alpha: 0.802547089)
         updateButton.layer.borderWidth = 1
         updateButton.layer.cornerRadius = 5

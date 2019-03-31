@@ -6,6 +6,7 @@
 //  Copyright © 2016 Sergey Zolotarev. All rights reserved.
 //
 
+import Mapbox
 import UIKit
 
 @UIApplicationMain
@@ -13,8 +14,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
 
-    private func application(application: UIApplication,
-                             didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
+    public func application(_ application: UIApplication,
+                            didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil
+    ) -> Bool {
+        MGLAccountManager.accessToken =
+            PrivateInfo.dictionary["MGLMapboxAccessToken"] as? String
         return true
     }
 }
