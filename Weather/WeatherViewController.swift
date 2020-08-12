@@ -277,7 +277,7 @@ class WeatherViewController: UIViewController, CLLocationManagerDelegate, UIText
                 return
             }
 
-            print("Geocoded location: \(city, country, location)")
+            print("Geocoded location: \((city, country, location))")
             self.city = city
             self.country = country
             self.location = location
