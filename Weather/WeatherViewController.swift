@@ -69,7 +69,7 @@ class WeatherViewController: UIViewController, CLLocationManagerDelegate, UIText
             countryLabel.isHidden = true
             loadingLabel.isHidden = true
             chooseLabel.isHidden = false
-            temperatureLabel.text = "N/A"
+            temperatureLabel.text = "¯\\_(ツ)_/¯"
         }
     }
 
