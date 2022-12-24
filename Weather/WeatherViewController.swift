@@ -43,6 +43,7 @@ class WeatherViewController: UIViewController, CLLocationManagerDelegate, UIText
         updateButton.layer.borderWidth = 1
         updateButton.layer.cornerRadius = 5
         updateButton.contentEdgeInsets = UIEdgeInsets(top: 0, left: 8, bottom: 0, right: 8)
+        updateLocationFormState()
 
         locationManager.delegate = self
         switch CLLocationManager.authorizationStatus() {
@@ -69,7 +70,7 @@ class WeatherViewController: UIViewController, CLLocationManagerDelegate, UIText
             countryLabel.isHidden = true
             loadingLabel.isHidden = true
             chooseLabel.isHidden = false
-            temperatureLabel.text = "¯\\_(ツ)_/¯"
+            temperatureLabel.isHidden = true
         }
     }
 
@@ -129,10 +130,10 @@ class WeatherViewController: UIViewController, CLLocationManagerDelegate, UIText
                 break
         }
     }
-
+    
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         if textField == locationField {
-            updateLocation()
+            handleLocationChange()
             view.endEditing(true)
         }
         return true
@@ -164,6 +165,7 @@ class WeatherViewController: UIViewController, CLLocationManagerDelegate, UIText
         cityButton.isHidden = true
         countryLabel.isHidden = true
         temperatureLabel.alpha = 0
+        temperatureLabel.isHidden = false
         loadingLabel.isHidden = false
         chooseLabel.isHidden = true
         activityIndicator.startAnimating()
@@ -239,6 +241,7 @@ class WeatherViewController: UIViewController, CLLocationManagerDelegate, UIText
         cityButton.isHidden = true
         countryLabel.isHidden = true
         temperatureLabel.alpha = 0
+        temperatureLabel.isHidden = false
         loadingLabel.isHidden = false
         chooseLabel.isHidden = true
         activityIndicator.startAnimating()
@@ -303,10 +306,10 @@ class WeatherViewController: UIViewController, CLLocationManagerDelegate, UIText
         view.endEditing(true)
     }
 
-    @IBAction func showCity(_ sender: Any) {
+    @IBAction func handleCityTap(_ sender: Any) {
     }
 
-    @IBAction func updateLocation() {
+    @IBAction func handleLocationChange() {
         view.endEditing(true)
 
         if let address = locationField.text, !address.isEmpty {
@@ -315,6 +318,22 @@ class WeatherViewController: UIViewController, CLLocationManagerDelegate, UIText
                     self.settings.address = address
                 }
             })
+        }
+    }
+    
+    @IBAction func handleLocationFieldTextChanged() {
+        updateLocationFormState()
+    }
+    
+    private func updateLocationFormState() {
+        if let text = locationField.text {
+            if text.count >= 3 {
+                updateButton.isEnabled = true
+                updateButton.alpha = 1.0
+            } else {
+                updateButton.isEnabled = false
+                updateButton.alpha = 0.6
+            }
         }
     }
 

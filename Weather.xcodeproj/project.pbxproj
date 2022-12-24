@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		6D5F54A12250F66D003F2963 /* PrivateInfo.plist in Resources */ = {isa = PBXBuildFile; fileRef = 6D5F54A02250F66D003F2963 /* PrivateInfo.plist */; };
 		6D687D582250FADD003FEEE0 /* PrivateInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D687D572250FADD003FEEE0 /* PrivateInfo.swift */; };
+		6D72B87B29567B8D0097EB63 /* PrivateInfo.sample.plist in Resources */ = {isa = PBXBuildFile; fileRef = 6D72B87A29567B8D0097EB63 /* PrivateInfo.sample.plist */; };
 		6D822F67223EF93800068FE6 /* CityViewController2.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D822F66223EF93800068FE6 /* CityViewController2.swift */; };
 		6DCBDB34222375D4000EED58 /* CityViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DCBDB33222375D4000EED58 /* CityViewController.swift */; };
 		A52925841C51EDC600CB4365 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A52925831C51EDC600CB4365 /* AppDelegate.swift */; };
@@ -26,6 +27,7 @@
 		1A486A14B2DBEB25FD4A05B4 /* Pods_Weather.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Weather.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		6D5F54A02250F66D003F2963 /* PrivateInfo.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = PrivateInfo.plist; sourceTree = "<group>"; };
 		6D687D572250FADD003FEEE0 /* PrivateInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrivateInfo.swift; sourceTree = "<group>"; };
+		6D72B87A29567B8D0097EB63 /* PrivateInfo.sample.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = PrivateInfo.sample.plist; sourceTree = "<group>"; };
 		6D822F66223EF93800068FE6 /* CityViewController2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CityViewController2.swift; sourceTree = "<group>"; };
 		6DCBDB33222375D4000EED58 /* CityViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CityViewController.swift; sourceTree = "<group>"; };
 		8636E659623848E93F178E12 /* Pods-Weather.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Weather.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Weather/Pods-Weather.debug.xcconfig"; sourceTree = "<group>"; };
@@ -92,6 +94,7 @@
 				A529258C1C51EDC600CB4365 /* LaunchScreen.storyboard */,
 				A52925871C51EDC600CB4365 /* Main.storyboard */,
 				6D5F54A02250F66D003F2963 /* PrivateInfo.plist */,
+				6D72B87A29567B8D0097EB63 /* PrivateInfo.sample.plist */,
 				6D687D572250FADD003FEEE0 /* PrivateInfo.swift */,
 				A57AC0B71C6AE7AB0069E0A4 /* Settings.swift */,
 				A56A4F181C69CFEB006DC98F /* SettingsViewController.swift */,
@@ -138,7 +141,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 0720;
-				LastUpgradeCheck = 1010;
+				LastUpgradeCheck = 1240;
 				ORGANIZATIONNAME = "Sergey Zolotarev";
 				TargetAttributes = {
 					A529257F1C51EDC600CB4365 = {
@@ -173,6 +176,7 @@
 				A529258E1C51EDC600CB4365 /* LaunchScreen.storyboard in Resources */,
 				A529258B1C51EDC600CB4365 /* Assets.xcassets in Resources */,
 				6D5F54A12250F66D003F2963 /* PrivateInfo.plist in Resources */,
+				6D72B87B29567B8D0097EB63 /* PrivateInfo.sample.plist in Resources */,
 				A52925891C51EDC600CB4365 /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -279,6 +283,7 @@
 				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
 				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
@@ -302,7 +307,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 9.2;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_CODE_SIGN_FLAGS = "--generate-entitlement-der";
@@ -334,6 +339,7 @@
 				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
 				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
@@ -351,7 +357,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 9.2;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				OTHER_CODE_SIGN_FLAGS = "--generate-entitlement-der";
 				SDKROOT = iphoneos;

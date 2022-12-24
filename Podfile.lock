@@ -1,16 +1,20 @@
 PODS:
-  - Mapbox-iOS-SDK (4.0.5)
+  - Mapbox-iOS-SDK (6.4.1):
+    - MapboxMobileEvents (~> 0.10.12)
+  - MapboxMobileEvents (0.10.14)
 
 DEPENDENCIES:
-  - Mapbox-iOS-SDK
+  - Mapbox-iOS-SDK (~> 6.4.1)
 
 SPEC REPOS:
   trunk:
     - Mapbox-iOS-SDK
+    - MapboxMobileEvents
 
 SPEC CHECKSUMS:
-  Mapbox-iOS-SDK: c6bab367011e441e7345d4fe9340633c6b476bf4
+  Mapbox-iOS-SDK: f870f83cbdc7aa4a74afcee143aafb0dae390c82
+  MapboxMobileEvents: 5a172cc9bbf8ac0e45ba86095cbee685ede248cc
 
-PODFILE CHECKSUM: c78ac081cc3e7e241a92097b454c3d721348711d
+PODFILE CHECKSUM: 5b46eed63986222caa7f9579d5431ae3dc7ea417
 
 COCOAPODS: 1.11.3
